@@ -1,0 +1,163 @@
+[
+    {
+        "id": "8a186d6608a1f65e",
+        "type": "comment",
+        "z": "a425ae39b55ab4be",
+        "name": "UI Form To PDF Filer",
+        "info": "",
+        "x": 420,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "88d0e370e18fbeb2",
+        "type": "group",
+        "z": "a425ae39b55ab4be",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "c62ff3d7c17820f0",
+            "8ccaee467b1bb91e",
+            "1549a1e39d226e9f",
+            "06339e7439466ab4"
+        ],
+        "x": 154,
+        "y": 179,
+        "w": 532,
+        "h": 162
+    },
+    {
+        "id": "c62ff3d7c17820f0",
+        "type": "ui_form",
+        "z": "a425ae39b55ab4be",
+        "g": "88d0e370e18fbeb2",
+        "name": "Student Form",
+        "label": "Student Form",
+        "group": "e7032d07.49b7d",
+        "order": 0,
+        "width": "6",
+        "height": "8",
+        "options": [
+            {
+                "label": "Name",
+                "value": "name",
+                "type": "text",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Age",
+                "value": "age",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Grade",
+                "value": "grade",
+                "type": "text",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "age": "",
+            "grade": ""
+        },
+        "payload": "submit",
+        "submit": "Submit",
+        "cancel": "",
+        "topic": "form",
+        "topicType": "str",
+        "splitLayout": false,
+        "className": "",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "8ccaee467b1bb91e"
+            ]
+        ]
+    },
+    {
+        "id": "8ccaee467b1bb91e",
+        "type": "function",
+        "z": "a425ae39b55ab4be",
+        "g": "88d0e370e18fbeb2",
+        "name": "Trigger PDF Generation",
+        "func": "// var studentData = {\n//   content: [\n//     { text: 'Student Information', style: 'header' },\n//     { text: `Name: ${msg.payload.name}` },\n//     { text: `Age: ${msg.payload.age}` },\n//     { text: `Grade: ${msg.payload.grade}` },\n//     { text: 'Table', style: 'subheader' },\n//     {\n//       table: {\n//         body: [\n//           ['Subject', 'Score'],\n//           ['Math', '90'],\n//           ['Science', '85'],\n//           ['English', '95']\n//         ]\n//       },\n//       layout: 'lightHorizontalLines'\n//     }\n//   ]\n// };\n\n// msg.payload = studentData;\n// return msg;\n\nvar studentData = {\n  content: [\n    { text: 'Student Information', style: 'header' },\n    { text: `Name: ${msg.payload.name}` },\n    { text: `Age: ${msg.payload.age}` },\n    { text: `Grade: ${msg.payload.grade}` },\n    { text: 'Table', style: 'subheader' },\n    {\n      style: 'tableExample',\n      table: {\n        headerRows: 1,\n        widths: ['*', '*'],\n        body: [\n          [{ text: 'Subject', style: 'tableHeader' }, { text: 'Score', style: 'tableHeader' }],\n          ['Math', '90'],\n          ['Science', '85'],\n          ['English', '95']\n        ]\n      },\n      layout: {\n        hLineWidth: function (i, node) {\n          return i === 0 || i === node.table.body.length ? 2 : 1;\n        },\n        vLineWidth: function (i, node) {\n          return i === 0 ? 2 : 1;\n        },\n        hLineColor: function (i, node) {\n          return i === 0 || i === node.table.body.length ? '#000' : '#aaa';\n        },\n        vLineColor: function (i) {\n          return i === 0 ? '#000' : '#aaa';\n        },\n        paddingLeft: function (i, node) { return 4; },\n        paddingRight: function (i, node) { return 4; },\n        paddingTop: function (i, node) { return 2; },\n        paddingBottom: function (i, node) { return 2; }\n      }\n    }\n  ],\n  styles: {\n    header: {\n      fontSize: 18,\n      bold: true,\n      margin: [0, 0, 0, 10]\n    },\n    subheader: {\n      fontSize: 14,\n      bold: true,\n      margin: [0, 10, 0, 5]\n    },\n    tableExample: {\n      margin: [0, 5, 0, 15]\n    },\n    tableHeader: {\n      bold: true,\n      fontSize: 13,\n      color: 'black'\n    }\n  }\n};\nvar filename = `E:\\\\nodered git\\\\noderedgit-yt\\\\Noderedyt\\\\${msg.payload.name}_student.pdf`;\nmsg.payload = studentData;\n// Set the filename property in the message\nmsg.filename = filename;\n\n// Send the message with the payload and filename\nreturn msg;\n// msg.payload = studentData;\n// return msg;\n// Create a filename based on the provided name in the form\n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "1549a1e39d226e9f"
+            ]
+        ]
+    },
+    {
+        "id": "1549a1e39d226e9f",
+        "type": "pdfmake",
+        "z": "a425ae39b55ab4be",
+        "g": "88d0e370e18fbeb2",
+        "name": "",
+        "outputType": "Buffer",
+        "inputProperty": "payload",
+        "options": "{}",
+        "outputProperty": "payload",
+        "x": 500,
+        "y": 220,
+        "wires": [
+            [
+                "06339e7439466ab4"
+            ]
+        ]
+    },
+    {
+        "id": "06339e7439466ab4",
+        "type": "file",
+        "z": "a425ae39b55ab4be",
+        "g": "88d0e370e18fbeb2",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 600,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e7032d07.49b7d",
+        "type": "ui_group",
+        "name": "Student Form",
+        "tab": "7c9f32a6.837174",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "7c9f32a6.837174",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "order": 1
+    }
+]

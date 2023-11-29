@@ -1,0 +1,243 @@
+[
+    {
+        "id": "50fd0e1067714031",
+        "type": "group",
+        "z": "e4af060c4f7721f6",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "78187ecdd0ccb8e7",
+            "a06bdd0a34354fc0",
+            "6aa8a6f94d5a3395",
+            "8c510f15d4121beb",
+            "c7a22f9d9640164d",
+            "5c6104b3bdfe3660",
+            "bed4f8c112c4250b"
+        ],
+        "x": 74,
+        "y": 79,
+        "w": 692,
+        "h": 282
+    },
+    {
+        "id": "78187ecdd0ccb8e7",
+        "type": "comment",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "Excel To UI Table",
+        "info": "",
+        "x": 420,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a06bdd0a34354fc0",
+        "type": "inject",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "6aa8a6f94d5a3395"
+            ]
+        ]
+    },
+    {
+        "id": "6aa8a6f94d5a3395",
+        "type": "file in",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "",
+        "filename": "E:/nodered git/users.xlsx",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 210,
+        "y": 260,
+        "wires": [
+            [
+                "bed4f8c112c4250b"
+            ]
+        ]
+    },
+    {
+        "id": "8c510f15d4121beb",
+        "type": "function",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "Array to Object",
+        "func": "var headers = msg.payload[0];\nvar data = msg.payload.slice(1);\nvar result = [];\nfor (var i = 0; i < data.length; i++) {\n    var obj = {};\n    for (var j = 0; j < headers.length; j++) {\n        obj[headers[j]] = data[i][j];\n    }\n    result.push(obj);\n}\nmsg.payload = result;\nreturn msg;\n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 260,
+        "wires": [
+            [
+                "c7a22f9d9640164d",
+                "5c6104b3bdfe3660"
+            ]
+        ]
+    },
+    {
+        "id": "c7a22f9d9640164d",
+        "type": "ui_table",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "group": "61a9c01258f815c0",
+        "name": "",
+        "order": 2,
+        "width": "13",
+        "height": "11",
+        "columns": [
+            {
+                "field": "image",
+                "title": "image",
+                "width": "",
+                "align": "left",
+                "formatter": "image",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "name",
+                "title": "name",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "age",
+                "title": "age",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "email",
+                "title": "email",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Link",
+                "title": "link",
+                "width": "",
+                "align": "left",
+                "formatter": "link",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Ratings",
+                "title": "Ratings",
+                "width": "",
+                "align": "left",
+                "formatter": "star",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 630,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "5c6104b3bdfe3660",
+        "type": "debug",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "debug 27",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "bed4f8c112c4250b",
+        "type": "xlsx",
+        "z": "e4af060c4f7721f6",
+        "g": "50fd0e1067714031",
+        "name": "",
+        "parse": "rows",
+        "map": "",
+        "x": 390,
+        "y": 260,
+        "wires": [
+            [
+                "8c510f15d4121beb"
+            ]
+        ]
+    },
+    {
+        "id": "61a9c01258f815c0",
+        "type": "ui_group",
+        "name": "Table",
+        "tab": "11c2853c.1460ad",
+        "order": 4,
+        "disp": true,
+        "width": "13",
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "11c2853c.1460ad",
+        "type": "ui_tab",
+        "name": "User Data",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
