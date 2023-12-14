@@ -1,0 +1,232 @@
+[
+    {
+        "id": "6e5613e12863fb88",
+        "type": "group",
+        "z": "c82b5cc5fddc1db6",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "724b25164cb8df0d",
+            "aaecaabb6ae0ce18",
+            "c030d72d8f13f505",
+            "f15654f7f36ea95d",
+            "d7cf4b367be9441d"
+        ],
+        "x": 134,
+        "y": 59,
+        "w": 532,
+        "h": 282
+    },
+    {
+        "id": "724b25164cb8df0d",
+        "type": "comment",
+        "z": "c82b5cc5fddc1db6",
+        "g": "6e5613e12863fb88",
+        "name": "Generate PDF Form UI Form Input",
+        "info": "",
+        "x": 460,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "aaecaabb6ae0ce18",
+        "type": "ui_form",
+        "z": "c82b5cc5fddc1db6",
+        "g": "6e5613e12863fb88",
+        "name": "PDF Form",
+        "label": "",
+        "group": "73f9202c.7605b8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Name",
+                "value": "name",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Email",
+                "value": "email",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Contact No",
+                "value": "contact",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Skills",
+                "value": "skills",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Qualification",
+                "value": "qualification",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Company",
+                "value": "company",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Role",
+                "value": "role",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Responsibilities",
+                "value": "responsibilities",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Technologies",
+                "value": "technologies",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Duration",
+                "value": "duration",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Project",
+                "value": "project",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "email": "",
+            "contact": "",
+            "skills": "",
+            "qualification": "",
+            "company": "",
+            "role": "",
+            "responsibilities": "",
+            "technologies": "",
+            "duration": "",
+            "project": ""
+        },
+        "payload": "",
+        "submit": "Generate PDF File",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "c030d72d8f13f505"
+            ]
+        ]
+    },
+    {
+        "id": "c030d72d8f13f505",
+        "type": "function",
+        "z": "c82b5cc5fddc1db6",
+        "g": "6e5613e12863fb88",
+        "name": "function 2",
+        "func": "var resumeData ={\n    content:[\n        {text: 'Resume', style:'header'},\n        {text: `Name': ${msg.payload.name}`},\n        { text: `Email: ${msg.payload.email}` },\n        { text: `Contact No: ${msg.payload.contact}` },\n        { text: 'Skills:', style: 'subheader' },\n        { text: `${msg.payload.skills}` },\n        { text: `Qualification: ${msg.payload.qualification}` },\n        { text: 'Experience', style: 'subheader' },\n        { text: `Company: ${msg.payload.company}` },\n        { text: `Role: ${msg.payload.role}` },\n        { text: `Responsibilities: ${msg.payload.responsibilities}` },\n        { text: `Technologies: ${msg.payload.technologies}` },\n        { text: `Duration: ${msg.payload.duration}` },\n        { text: 'Project:', style: 'subheader' },\n        { text: `${msg.payload.project}` }\n    ],\n    styles:{\n        header:{\n            fontSize: 18,\n            bold: true,\n            margin: [0, 0, 0, 10]\n        },\n        subheader:{\n            fontSize: 14,\n            bold: true,\n            margin: [0, 10, 0, 5]\n        }\n    }\n};\n\nvar filename = `E:\\\\nodered git\\\\noderedgit-yt\\\\${msg.payload.name}_resume.pdf`;\nmsg.payload = resumeData;\nmsg.filename = filename;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 300,
+        "wires": [
+            [
+                "f15654f7f36ea95d"
+            ]
+        ]
+    },
+    {
+        "id": "f15654f7f36ea95d",
+        "type": "pdfmake",
+        "z": "c82b5cc5fddc1db6",
+        "g": "6e5613e12863fb88",
+        "name": "",
+        "outputType": "Buffer",
+        "inputProperty": "payload",
+        "options": "{}",
+        "outputProperty": "payload",
+        "x": 480,
+        "y": 200,
+        "wires": [
+            [
+                "d7cf4b367be9441d"
+            ]
+        ]
+    },
+    {
+        "id": "d7cf4b367be9441d",
+        "type": "file",
+        "z": "c82b5cc5fddc1db6",
+        "g": "6e5613e12863fb88",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 580,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "73f9202c.7605b8",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "322b3dfa94651d4b",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "322b3dfa94651d4b",
+        "type": "ui_tab",
+        "name": "Resume",
+        "icon": "dashboard",
+        "order": 6,
+        "disabled": false,
+        "hidden": false
+    }
+]s
