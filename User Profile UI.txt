@@ -1,0 +1,96 @@
+[
+    {
+        "id": "a2c1b63b46a6cc37",
+        "type": "group",
+        "z": "3007e43dd62273d6",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "6087530c7c242f49",
+            "f0061c72a4920f41",
+            "b2b3d5f14dbce632",
+            "dbd911b77846cc87"
+        ],
+        "x": 114,
+        "y": 119,
+        "w": 452,
+        "h": 162
+    },
+    {
+        "id": "6087530c7c242f49",
+        "type": "http in",
+        "z": "3007e43dd62273d6",
+        "g": "a2c1b63b46a6cc37",
+        "name": "",
+        "url": "/userprofile",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 160,
+        "wires": [
+            [
+                "f0061c72a4920f41"
+            ]
+        ]
+    },
+    {
+        "id": "f0061c72a4920f41",
+        "type": "function",
+        "z": "3007e43dd62273d6",
+        "g": "a2c1b63b46a6cc37",
+        "name": "function 2",
+        "func": "msg.payload = [\n    {\n        \"id\": 1,\n        \"name\": \"John Doe\",\n        \"age\": 30,\n        \"place\": \"Cityville\",\n        \"dob\": \"1993-05-15\",\n        \"profession\": \"Software Engineer\",\n        \"image\": \"https://t3.ftcdn.net/jpg/02/22/85/16/360_F_222851624_jfoMGbJxwRi5AWGdPgXKSABMnzCQo9RN.jpg\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Alina\",\n        \"age\": 28,\n        \"place\": \"Townsville\",\n        \"dob\": \"1995-02-20\",\n        \"profession\": \"Graphic Designer\",\n        \"image\": \"https://st4.depositphotos.com/6903990/27898/i/450/depositphotos_278981062-stock-photo-beautiful-young-woman-clean-fresh.jpg\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Bob Johnson\",\n        \"age\": 35,\n        \"place\": \"Villageville\",\n        \"dob\": \"1988-11-10\",\n        \"profession\": \"Marketing Manager\",\n        \"image\": \"https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=600\"\n    }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 240,
+        "wires": [
+            [
+                "b2b3d5f14dbce632"
+            ]
+        ]
+    },
+    {
+        "id": "b2b3d5f14dbce632",
+        "type": "template",
+        "z": "3007e43dd62273d6",
+        "g": "a2c1b63b46a6cc37",
+        "name": "Profile Template",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        body {\n            font-family: 'Arial', sans-serif;\n            background-color: #f4f4f4;\n            margin: 0;\n            padding: 0;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: auto;\n        }\n        .profile-container {\n            max-width: 600px;\n            background-color: #fff;\n            border-radius: 8px;\n            overflow: hidden;\n            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\n            padding: 20px;\n            text-align: center;\n        }\n        .profile-image {\n            border-radius: 50%;\n            width: 120px;\n            height: 120px;\n            object-fit: cover;\n            margin-bottom: 20px;\n            cursor: pointer;\n        }\n        .profile-details {\n            font-size: 18px;\n            color: #333;\n            margin-bottom: 20px;\n        }\n    </style>\n</head>\n    <body>\n        <div class=\"profile-container\">\n            <h1> User Profile </h1>\n            {{#payload}}\n             <img class=\"profile-image\" src=\"{{image}}\" alt=\"{{name}}\" onclick=\"showProfile({{id}})\">\n            <div class=\"profile-details\" id=\"profile-{{id}}\" style=\"display: none;\">\n                <p><strong>Name:</strong> {{name}}</p>\n                <p><strong>Age:</strong> {{age}}</p>\n                <p><strong>Place:</strong> {{place}}</p>\n                <p><strong>Date of Birth:</strong> {{dob}}</p>\n                <p><strong>Profession:</strong> {{profession}}</p>\n            </div>\n        {{/payload}}\n        </div>    \n        <script>\n            function showProfile(id) {\n                var profileDetails = document.getElementById('profile-' + id);\n                if (profileDetails.style.display === 'none') {\n                    profileDetails.style.display = 'block';\n                } else {\n                    profileDetails.style.display = 'none';\n                }\n            }\n        </script>\n    </body>\n</html>",
+        "output": "str",
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "dbd911b77846cc87"
+            ]
+        ]
+    },
+    {
+        "id": "dbd911b77846cc87",
+        "type": "http response",
+        "z": "3007e43dd62273d6",
+        "g": "a2c1b63b46a6cc37",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 490,
+        "y": 160,
+        "wires": []
+    }
+]
