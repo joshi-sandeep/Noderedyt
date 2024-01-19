@@ -1,0 +1,182 @@
+[
+    {
+        "id": "b3b2260358fa9590",
+        "type": "group",
+        "z": "c75b55527cfcbd21",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "9ddabfe7faa69f3a",
+            "0e37e8d9db44becf",
+            "c9f4fa1d34ba1778",
+            "f3abd8258456b943",
+            "0ebf943cd5bd9b6e",
+            "e0d45d438929c158",
+            "f859fc3ebe61bce4",
+            "28689dcd365b33a1"
+        ],
+        "x": 94,
+        "y": 79,
+        "w": 872,
+        "h": 302
+    },
+    {
+        "id": "9ddabfe7faa69f3a",
+        "type": "comment",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "Get All Youtube Transcript Data",
+        "info": "",
+        "x": 530,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0e37e8d9db44becf",
+        "type": "inject",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "f3abd8258456b943"
+            ]
+        ]
+    },
+    {
+        "id": "c9f4fa1d34ba1778",
+        "type": "http in",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "",
+        "url": "/transcript",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "f3abd8258456b943"
+            ]
+        ]
+    },
+    {
+        "id": "f3abd8258456b943",
+        "type": "http request",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://youtubetranscript.com/?server_vid2=ZFhDJAOd9Tg",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 410,
+        "y": 280,
+        "wires": [
+            [
+                "0ebf943cd5bd9b6e"
+            ]
+        ]
+    },
+    {
+        "id": "0ebf943cd5bd9b6e",
+        "type": "fastxml",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "",
+        "property": "payload",
+        "outproperty": "payload",
+        "attr": "",
+        "chr": "_",
+        "x": 580,
+        "y": 280,
+        "wires": [
+            [
+                "28689dcd365b33a1"
+            ]
+        ]
+    },
+    {
+        "id": "e0d45d438929c158",
+        "type": "debug",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f859fc3ebe61bce4",
+        "type": "http response",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 890,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "28689dcd365b33a1",
+        "type": "function",
+        "z": "c75b55527cfcbd21",
+        "g": "b3b2260358fa9590",
+        "name": "function 3",
+        "func": "var transcript = msg.payload.transcript.text;\nvar values = transcript.map(entry => entry._);\nmsg.payload = values;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 280,
+        "wires": [
+            [
+                "e0d45d438929c158",
+                "f859fc3ebe61bce4"
+            ]
+        ]
+    }
+]

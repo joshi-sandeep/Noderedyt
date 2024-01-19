@@ -1,0 +1,17 @@
+ <ListItem>
+        <ListItemAvatar>
+            <EventIcon />
+        </ListItemAvatar>
+        <ListItemText
+            primary={
+                <Typography
+                    sx={{ display: 'inline', marginLeft: 1 }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                >
+                    Schedule
+                </Typography>
+            }
+        />
+    </ListItem>
