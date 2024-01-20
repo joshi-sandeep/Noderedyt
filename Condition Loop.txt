@@ -1,0 +1,162 @@
+[
+    {
+        "id": "0301c65b17b5799e",
+        "type": "group",
+        "z": "89ee5fe2305eab08",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "2d59ee30cba0e904",
+            "06ecdf79a865f645",
+            "75047ec1dae0a4a3",
+            "a3a85ae350eca597",
+            "15dc6b444873839a",
+            "17a5fdef1537fb68"
+        ],
+        "x": 174,
+        "y": 119,
+        "w": 732,
+        "h": 202
+    },
+    {
+        "id": "2d59ee30cba0e904",
+        "type": "inject",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "x": 270,
+        "y": 200,
+        "wires": [
+            [
+                "17a5fdef1537fb68"
+            ]
+        ]
+    },
+    {
+        "id": "06ecdf79a865f645",
+        "type": "function",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "func": "msg.payload = msg.payload + 1;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 280,
+        "wires": [
+            [
+                "17a5fdef1537fb68"
+            ]
+        ]
+    },
+    {
+        "id": "75047ec1dae0a4a3",
+        "type": "debug",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a3a85ae350eca597",
+        "type": "debug",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "15dc6b444873839a",
+        "type": "function",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "func": "msg.payload = \"Result \" + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 160,
+        "wires": [
+            [
+                "a3a85ae350eca597"
+            ]
+        ]
+    },
+    {
+        "id": "17a5fdef1537fb68",
+        "type": "loop",
+        "z": "89ee5fe2305eab08",
+        "g": "0301c65b17b5799e",
+        "name": "",
+        "kind": "cond",
+        "count": "",
+        "initial": "1",
+        "step": "2",
+        "condition": "msg.payload < 10",
+        "conditionType": "js",
+        "when": "before",
+        "enumeration": "enum",
+        "enumerationType": "msg",
+        "limit": "",
+        "loopPayload": "loop-index",
+        "finalPayload": "final-last",
+        "x": 460,
+        "y": 200,
+        "wires": [
+            [
+                "15dc6b444873839a"
+            ],
+            [
+                "06ecdf79a865f645",
+                "75047ec1dae0a4a3"
+            ]
+        ]
+    }
+]
