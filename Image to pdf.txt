@@ -1,0 +1,193 @@
+[
+    {
+        "id": "657e7d7a6f5f07ad",
+        "type": "comment",
+        "z": "60de27c465b79ca0",
+        "name": "Image Analysis PDF",
+        "info": "",
+        "x": 490,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "53f40be556ca53f5",
+        "type": "group",
+        "z": "60de27c465b79ca0",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "7507a53f1fb2de16",
+            "3dc0b567611e5c3e",
+            "2e41989523d1574e",
+            "f8b561ccb1dc8986",
+            "92ba3a2395944c98",
+            "97c028433d8dc8b8",
+            "b5b21479c1e6744a",
+            "e87c0b5772081554"
+        ],
+        "x": 34,
+        "y": 139,
+        "w": 932,
+        "h": 302
+    },
+    {
+        "id": "7507a53f1fb2de16",
+        "type": "inject",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 280,
+        "wires": [
+            [
+                "3dc0b567611e5c3e"
+            ]
+        ]
+    },
+    {
+        "id": "3dc0b567611e5c3e",
+        "type": "file in",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "",
+        "filename": "E:/nodered git/noderedgit-yt/image.png",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "97c028433d8dc8b8"
+            ]
+        ]
+    },
+    {
+        "id": "2e41989523d1574e",
+        "type": "template",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "Generate PDF Content",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"pageSize\": \"A4\",\n    \"pageOrientation\": \"portrait\",\n    \"pageMargins\": [\n        40,\n        60,\n        40,\n        60\n    ],\n    \"info\": {\n        \"title\": \"Image Analysis Report\",\n        \"author\": \"Node-RED AI\",\n        \"subject\": \"Analysis of uploaded image\",\n        \"keywords\": \"image analysis, PDF generation\"\n    },\n    \"content\": [\n        \"Analysis Report\",\n        {\n            \"text\": \"Based on our analysis of the uploaded image, here are some findings:\",\n            \"fontSize\": 12,\n            \"margin\": [0, 0, 0, 10]\n        },\n        {\n            \"image\": \"data:image/jpeg;base64,{{{payload.image}}}\",\n            \"width\": 200,\n            \"margin\": [0, 10, 0, 20]\n        },\n        {\n            \"text\": \"Image Description:\",\n            \"fontSize\": 14,\n            \"margin\": [0, 0, 0, 10]\n        },\n        {\n            \"text\": \"{{{payload.imageDescription}}}\",\n            \"fontSize\": 12,\n            \"margin\": [0, 0, 0, 20]\n        },\n        {\n            \"text\": \"Sample SVG\",\n            \"fontSize\": 14,\n            \"margin\": [0, 20, 0, 10]\n        },\n        {\n            \"svg\": \"<svg width=\\\"300\\\" height=\\\"200\\\" viewBox=\\\"0 0 300 200\\\"><polygon points=\\\"100,10 40,198 190,78 10,78 160,198\\\" style=\\\"fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;stroke-linecap:round;\\\"/></svg>\",\n            \"width\": 150,\n            \"margin\": [0, 0, 0, 20]\n        }\n    ]\n}",
+        "output": "json",
+        "x": 700,
+        "y": 280,
+        "wires": [
+            [
+                "92ba3a2395944c98"
+            ]
+        ]
+    },
+    {
+        "id": "f8b561ccb1dc8986",
+        "type": "file",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "",
+        "filename": "E:/nodered git/noderedgit-yt/myimage.pdf",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 740,
+        "y": 400,
+        "wires": [
+            [
+                "e87c0b5772081554"
+            ]
+        ]
+    },
+    {
+        "id": "92ba3a2395944c98",
+        "type": "pdfmake",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "",
+        "outputType": "Buffer",
+        "inputProperty": "payload",
+        "options": "{}",
+        "outputProperty": "payload",
+        "x": 360,
+        "y": 400,
+        "wires": [
+            [
+                "f8b561ccb1dc8986"
+            ]
+        ]
+    },
+    {
+        "id": "97c028433d8dc8b8",
+        "type": "base64",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "",
+        "action": "str",
+        "property": "payload",
+        "x": 700,
+        "y": 180,
+        "wires": [
+            [
+                "b5b21479c1e6744a"
+            ]
+        ]
+    },
+    {
+        "id": "b5b21479c1e6744a",
+        "type": "function",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "Image Analysis",
+        "func": "msg.payload = {\n    image: msg.payload,\n    imageDescription: \"A detailed analysis of the uploaded image will be performed here.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 280,
+        "wires": [
+            [
+                "2e41989523d1574e"
+            ]
+        ]
+    },
+    {
+        "id": "e87c0b5772081554",
+        "type": "debug",
+        "z": "60de27c465b79ca0",
+        "g": "53f40be556ca53f5",
+        "name": "debug 70",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 340,
+        "wires": []
+    }
+]
