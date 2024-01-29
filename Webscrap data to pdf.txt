@@ -1,0 +1,163 @@
+[
+    {
+        "id": "f00b949795757e57",
+        "type": "http in",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "",
+        "url": "/webscrap",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "3eca9c5f6b5d39b1"
+            ]
+        ]
+    },
+    {
+        "id": "3eca9c5f6b5d39b1",
+        "type": "http request",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "Fetch HTML",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://inshorts.com/en/read",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "credentials": {},
+        "x": 290,
+        "y": 160,
+        "wires": [
+            [
+                "f7e13074f87a4b28"
+            ]
+        ]
+    },
+    {
+        "id": "f7e13074f87a4b28",
+        "type": "html",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "Extract Data",
+        "property": "payload",
+        "outproperty": "payload",
+        "tag": "div",
+        "ret": "text",
+        "as": "single",
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "4f31bb6736bd63b3"
+            ]
+        ]
+    },
+    {
+        "id": "4f31bb6736bd63b3",
+        "type": "function",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "Create PDF",
+        "func": "// Function to process data and generate PDF\nconst generatePDF = (data) => {\n    const content = [];\n    content.push({ text: 'Data from Web Scrape', style: 'header' });\n    content.push({ text: '\\n' }); // Add a new line after the header\n\n    // Loop through each array value\n    data.forEach((item) => {\n        // Check if the array item has more than 10 words\n        const words = item.split(/\\s+/);\n        if (words.length > 10) {\n            // Add the array item to the content\n            content.push(item);\n\n            // Add a new line\n            content.push({ text: '\\n' });\n        }\n    });\n\n    const docDefinition = {\n        content: content,\n    };\n\n    return docDefinition;\n};\n\n// Generate PDF definition\nconst pdfDefinition = generatePDF(msg.payload);\n\n// Send PDF definition to pdfmake node\nmsg.payload = pdfDefinition;\n\nnode.warn(pdfDefinition);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 170,
+        "y": 320,
+        "wires": [
+            [
+                "ec98f2295d8925a6",
+                "a347ac271f5ff3c3",
+                "bde2d46eaeaa0cf4"
+            ]
+        ]
+    },
+    {
+        "id": "f8ca49d3ae2c6e5d",
+        "type": "file",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "",
+        "filename": "E:/nodered git/noderedgit-yt/webscrap.pdf",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 660,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ec98f2295d8925a6",
+        "type": "pdfmake",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "",
+        "outputType": "Buffer",
+        "inputProperty": "payload",
+        "options": "{}",
+        "outputProperty": "payload",
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "f8ca49d3ae2c6e5d"
+            ]
+        ]
+    },
+    {
+        "id": "a347ac271f5ff3c3",
+        "type": "debug",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "debug 70",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "bde2d46eaeaa0cf4",
+        "type": "http response",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 390,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "f859616c9cefe1c5",
+        "type": "comment",
+        "z": "f6d60e8dd23446f7",
+        "g": "b63f624294dc5e2f",
+        "name": "Webscrap data to PDF",
+        "info": "",
+        "x": 400,
+        "y": 100,
+        "wires": []
+    }
+]
