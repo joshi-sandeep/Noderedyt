@@ -1,0 +1,244 @@
+[
+    {
+        "id": "2e3e7bd9609374f4",
+        "type": "group",
+        "z": "c50ab965dd828214",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "43d09ef7e4ec4313",
+            "9a8871852ab531ba",
+            "3c807b1635978d5e",
+            "ba6f136e2ea4713e",
+            "9a92bff38f6d8231",
+            "2f53ece3b9b02320",
+            "3332c66a3840d11e",
+            "2878d6aebc255cea",
+            "20eb3c7f53410919"
+        ],
+        "x": 74,
+        "y": 79,
+        "w": 712,
+        "h": 362
+    },
+    {
+        "id": "43d09ef7e4ec4313",
+        "type": "comment",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "  DYNAMIC GITHUB PROFILE DETAILS TO DATABASE",
+        "info": "",
+        "x": 380,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9a8871852ab531ba",
+        "type": "http in",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "GitHub Profile UI",
+        "url": "/dynamic-github-profile",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "3c807b1635978d5e"
+            ]
+        ]
+    },
+    {
+        "id": "3c807b1635978d5e",
+        "type": "ui_form",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "",
+        "label": "GitHub Profile Details",
+        "group": "ee7fdc750cf22d74",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "GitHub Username",
+                "value": "github_username",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "github_username": ""
+        },
+        "payload": "",
+        "submit": "search user",
+        "cancel": "",
+        "topic": "",
+        "topicType": "str",
+        "splitLayout": false,
+        "className": "",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "ba6f136e2ea4713e"
+            ]
+        ]
+    },
+    {
+        "id": "ba6f136e2ea4713e",
+        "type": "function",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "Set GitHub API URL",
+        "func": "var username = msg.payload.github_username;\nmsg.url = `https://api.github.com/users/${username}`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 200,
+        "y": 320,
+        "wires": [
+            [
+                "9a92bff38f6d8231"
+            ]
+        ]
+    },
+    {
+        "id": "9a92bff38f6d8231",
+        "type": "http request",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "GitHub API Request",
+        "method": "GET",
+        "ret": "obj",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 460,
+        "y": 320,
+        "wires": [
+            [
+                "2f53ece3b9b02320",
+                "2878d6aebc255cea",
+                "20eb3c7f53410919"
+            ]
+        ]
+    },
+    {
+        "id": "2f53ece3b9b02320",
+        "type": "function",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "Format Profile Data",
+        "func": "// Check if the user exists\nif (msg.payload.message === 'Not Found') {\n    msg.payload = 'User not found on GitHub.';\n} else {\n    // Extract relevant profile details from the GitHub API response\n    var profileData = {\n        login: msg.payload.login,\n        id: msg.payload.id,\n        avatar_url: msg.payload.avatar_url,\n        html_url: msg.payload.html_url,\n        followers: msg.payload.followers,\n        following: msg.payload.following,\n        public_repos: msg.payload.public_repos,\n        created_at: msg.payload.created_at,\n        updated_at: msg.payload.updated_at\n    };\n\n    // Format the HTML content for the profile\n    msg.payload = `<!DOCTYPE html>\n    <html lang=\"en\">\n    <head>\n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n        <style>\n            body {\n                font-family: 'Arial', sans-serif;\n                background-color: #f4f4f4;\n                margin: 0;\n                padding: 0;\n                display: flex;\n                justify-content: center;\n                align-items: center;\n                height: 100vh;\n            }\n            .profile-container {\n                text-align: center;\n            }\n            .profile-image {\n                border-radius: 50%;\n                width: 120px;\n                height: 120px;\n                object-fit: cover;\n                margin-bottom: 20px;\n            }\n            .profile-details {\n                font-size: 18px;\n                color: #333;\n                margin-bottom: 20px;\n            }\n        </style>\n    </head>\n    <body>\n        <div class=\"profile-container\">\n            <img class=\"profile-image\" src=\"${profileData.avatar_url}\" alt=\"Profile Image\">\n            <div class=\"profile-details\">\n                <p><strong>Login:</strong> ${profileData.login}</p>\n                <p><strong>ID:</strong> ${profileData.id}</p>\n                <p><strong>Followers:</strong> ${profileData.followers}</p>\n                <p><strong>Following:</strong> ${profileData.following}</p>\n                <p><strong>Public Repos:</strong> ${profileData.public_repos}</p>\n                <p><strong>GitHub URL:</strong> <a href=\"${profileData.html_url}\" target=\"_blank\">${profileData.html_url}</a></p>\n                <p><strong>Created At:</strong> ${profileData.created_at}</p>\n                <p><strong>Updated At:</strong> ${profileData.updated_at}</p>\n            </div>\n        </div>\n    </body>\n    </html>`;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 590,
+        "y": 240,
+        "wires": [
+            [
+                "3332c66a3840d11e"
+            ]
+        ]
+    },
+    {
+        "id": "3332c66a3840d11e",
+        "type": "ui_template",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "group": "ee7fdc750cf22d74",
+        "name": "",
+        "order": 1,
+        "width": "6",
+        "height": "7",
+        "format": "<div ng-bind-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 600,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2878d6aebc255cea",
+        "type": "debug",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "20eb3c7f53410919",
+        "type": "mongodb out",
+        "z": "c50ab965dd828214",
+        "g": "2e3e7bd9609374f4",
+        "mongodb": "7486e96179aaedee",
+        "name": "",
+        "collection": "gitusers",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 610,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ee7fdc750cf22d74",
+        "type": "ui_group",
+        "name": "Text Input",
+        "tab": "daeb6467dd3e1ff6",
+        "order": 6,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7486e96179aaedee",
+        "type": "mongodb",
+        "hostname": "127.0.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "Demo",
+        "name": ""
+    },
+    {
+        "id": "daeb6467dd3e1ff6",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]

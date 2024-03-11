@@ -1,0 +1,180 @@
+[
+    {
+        "id": "678bc2c61dd8b419",
+        "type": "group",
+        "z": "fee67dd510d1c54d",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "cbdf156ec4abae69",
+            "3b69831f1d1d36c4",
+            "c238bca9e1b5e40b",
+            "2ea7678ae9a97047",
+            "241aa9856c83d629",
+            "86b4e22aa4705637",
+            "c871a8892070c32a",
+            "e87cca108e7da5c4"
+        ],
+        "x": 14,
+        "y": 79,
+        "w": 692,
+        "h": 362
+    },
+    {
+        "id": "cbdf156ec4abae69",
+        "type": "http in",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "",
+        "url": "/webscrapdb",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "3b69831f1d1d36c4"
+            ]
+        ]
+    },
+    {
+        "id": "3b69831f1d1d36c4",
+        "type": "http request",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "Fetch HTML",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://en.wikipedia.org/wiki/Weather#:~:text=Weather refers to day-to,mean the weather of Earth.",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "c238bca9e1b5e40b"
+            ]
+        ]
+    },
+    {
+        "id": "c238bca9e1b5e40b",
+        "type": "html",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "Extract Data",
+        "property": "payload",
+        "outproperty": "payload",
+        "tag": "p",
+        "ret": "text",
+        "as": "single",
+        "x": 470,
+        "y": 180,
+        "wires": [
+            [
+                "2ea7678ae9a97047"
+            ]
+        ]
+    },
+    {
+        "id": "2ea7678ae9a97047",
+        "type": "function",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "create data strecture",
+        "func": "// Function to process data and generate PDF\nconst generatePDF = (data) => {\n    const content = [];\n    content.push({ text: 'Data from Web Scrape', style: 'header' });\n    content.push({ text: '\\n' }); // Add a new line after the header\n\n    // Loop through each array value\n    data.forEach((item) => {\n        // Check if the array item has more than 10 words\n        const words = item.split(/\\s+/);\n        if (words.length > 10) {\n            // Add the array item to the content\n            content.push(item);\n\n            // Add a new line\n            content.push({ text: '\\n' });\n        }\n    });\n\n    const docDefinition = {\n        content: content,\n    };\n\n    return docDefinition;\n};\n\n// Generate PDF definition\nconst pdfDefinition = generatePDF(msg.payload);\n\n// Send PDF definition to pdfmake node\nmsg.payload = pdfDefinition;\n\nnode.warn(pdfDefinition);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 340,
+        "wires": [
+            [
+                "241aa9856c83d629",
+                "86b4e22aa4705637",
+                "e87cca108e7da5c4"
+            ]
+        ]
+    },
+    {
+        "id": "241aa9856c83d629",
+        "type": "debug",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "debug 74",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "86b4e22aa4705637",
+        "type": "http response",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 390,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "c871a8892070c32a",
+        "type": "comment",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "name": "Webscrap data to Database",
+        "info": "",
+        "x": 420,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "e87cca108e7da5c4",
+        "type": "mongodb out",
+        "z": "fee67dd510d1c54d",
+        "g": "678bc2c61dd8b419",
+        "mongodb": "7486e96179aaedee",
+        "name": "",
+        "collection": "weather",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 560,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "7486e96179aaedee",
+        "type": "mongodb",
+        "hostname": "127.0.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "Demo",
+        "name": ""
+    }
+]
