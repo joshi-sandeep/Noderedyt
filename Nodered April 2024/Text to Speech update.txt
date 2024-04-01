@@ -1,0 +1,174 @@
+[
+    {
+        "id": "92ef29fefc9d48f8",
+        "type": "mongodb3 in",
+        "z": "ca2552fc6fdb8e0b",
+        "service": "_ext_",
+        "configNode": "578f374887ae9e23",
+        "name": "",
+        "collection": "students",
+        "operation": "find.toArray",
+        "x": 280,
+        "y": 260,
+        "wires": [
+            [
+                "c99098b3e06ef5eb",
+                "0f23cc485fc976a4",
+                "9e2ae45d2c9a97a3"
+            ]
+        ]
+    },
+    {
+        "id": "6c4b4d6e57fa7fae",
+        "type": "http in",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "",
+        "url": "/student",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 200,
+        "wires": [
+            [
+                "92ef29fefc9d48f8"
+            ]
+        ]
+    },
+    {
+        "id": "c99098b3e06ef5eb",
+        "type": "http response",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 530,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "0f23cc485fc976a4",
+        "type": "debug",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "debug 356",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "9e2ae45d2c9a97a3",
+        "type": "function",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "Extract Names",
+        "func": "var students = msg.payload;\nvar outputString = \"\";\n\nfor (var key in students) {\n    if (students.hasOwnProperty(key)) {\n        var student = students[key];\n        var subjects = student.subjects.join(\", \");\n        var address = student.address.city + \", \" + student.address.state + \", \" + student.address.country;\n        \n        outputString += student.name + \" is \" + student.age + \" years old, studying in grade \" + student.grade + \", and their favorite subjects are \" + subjects + \". They live in \" + address + \". \";\n    }\n}\n\nmsg.payload = outputString.trim();\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 340,
+        "wires": [
+            [
+                "db41d29f873db7be"
+            ]
+        ]
+    },
+    {
+        "id": "953055f818a3d239",
+        "type": "debug",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "debug 357",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "5802fffd0c828c21",
+        "type": "inject",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 320,
+        "wires": [
+            [
+                "92ef29fefc9d48f8"
+            ]
+        ]
+    },
+    {
+        "id": "db41d29f873db7be",
+        "type": "delay",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "50",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 730,
+        "y": 340,
+        "wires": [
+            [
+                "953055f818a3d239",
+                "bec8d3705f075283"
+            ]
+        ]
+    },
+    {
+        "id": "bec8d3705f075283",
+        "type": "play audio",
+        "z": "ca2552fc6fdb8e0b",
+        "name": "",
+        "voice": "0",
+        "x": 870,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "578f374887ae9e23",
+        "type": "mongodb3",
+        "uri": "mongodb://localhost:27017/test",
+        "name": "students data",
+        "options": "studnets",
+        "parallelism": "-1"
+    }
+]
