@@ -1,0 +1,1345 @@
+[
+    {
+        "id": "f36d6d28ce71d446",
+        "type": "http in",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "url": "/download",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 280,
+        "y": 720,
+        "wires": [
+            [
+                "654d6886a091db68"
+            ]
+        ]
+    },
+    {
+        "id": "af55edb79ba039b2",
+        "type": "http response",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1070,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "654d6886a091db68",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Get the file name",
+        "func": "msg.filename = msg.req.query.filename;\nmsg.contentdisposition = \"attachment; filename=\\\"\" + msg.req.query.filename.replace(/^.*(\\\\|\\/|\\:)/, '') + \"\\\"\";\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 720,
+        "wires": [
+            [
+                "bf38deb2a259ce19"
+            ]
+        ],
+        "outputLabels": [
+            "Folder selected"
+        ]
+    },
+    {
+        "id": "bf38deb2a259ce19",
+        "type": "file in",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 720,
+        "y": 720,
+        "wires": [
+            [
+                "cda3feb598e58e7a"
+            ]
+        ]
+    },
+    {
+        "id": "cda3feb598e58e7a",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Set Headers",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "text/csv",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.Content-Disposition",
+                "pt": "msg",
+                "to": "contentdisposition",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 890,
+        "y": 720,
+        "wires": [
+            [
+                "af55edb79ba039b2"
+            ]
+        ]
+    },
+    {
+        "id": "2919c14601badf18",
+        "type": "ui_etable",
+        "z": "6c09de67e3d9cfd4",
+        "payload": "[{\"title\":\"Type\",\"field\":\"icon\",\"formatter\":\"html\",\"width\":50},{\"title\":\"Name\",\"field\":\"fname\"},{\"title\":\"Size\",\"field\":\"stat.size\",\"sorter\":\"number\",\"width\":100,\"sorterParams\":{\"thousandSeparator\":\",\",\"decimalSeparator\":\".\",\"alignEmptyValues\":\"top\"}},{\"title\":\"Created\",\"field\":\"stat.created\",\"formatter\":\"datetime\",\"width\":200,\"formatterParams\":{\"outputFormat\":\"yyyy.MM.DD HH:mm:ss\",\"invalidPlaceholder\":\"(invalid date)\",\"timezone\":\"system\"}},{\"title\":\"Changed\",\"field\":\"stat.changed\",\"formatter\":\"datetime\",\"width\":200,\"formatterParams\":{\"outputFormat\":\"yyyy.MM.DD HH:mm:ss\",\"invalidPlaceholder\":\"(invalid date)\",\"timezone\":\"system\"}}]",
+        "payloadType": "json",
+        "options": "{\"movableColumns\":true,\"resizableColumns\":true,\"selectable\":1,\"responsiveLayout\":\"collapse\",\"autoResize\":true,\"layout\":\"fitColumns\",\"pagination\":\"local\",\"height\":\"100%\"}",
+        "group": "52810ad44931c64b",
+        "name": "File Browser",
+        "order": 6,
+        "width": "18",
+        "height": "10",
+        "columns": [],
+        "outputs": 1,
+        "cts": false,
+        "x": 830,
+        "y": 320,
+        "wires": [
+            [
+                "ad73310d37303682",
+                "5c35c24609ccca68",
+                "b4e6523e9f5420d6",
+                "c601abdc9a84225e"
+            ]
+        ]
+    },
+    {
+        "id": "a001b892c9f8292f",
+        "type": "comment",
+        "z": "6c09de67e3d9cfd4",
+        "name": "New File Browser",
+        "info": "",
+        "x": 160,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ea312bf823b2673a",
+        "type": "inject",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Init",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "change",
+        "payload": "filebrowser_default_folder",
+        "payloadType": "global",
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "088df51a870cdd7f",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Folder handling",
+        "func": "let folder = context.get(\"folder\");\nif (folder===undefined) {\n    folder=\"/\";\n    context.set(\"folder\", folder);\n}\n\nlet hidden = context.get(\"hidden\");\nif (hidden===undefined) {\n    hidden=false;\n    context.set(\"hidden\", hidden);\n}\n\nif (msg.topic===\"up\") {\n    var the_arr = folder.split('/');\n    the_arr.pop();\n    folder=the_arr.join('/'); \n    context.set(\"folder\", folder);\n}\nif (msg.topic===\"change\") {\n    folder=msg.payload;    \n    context.set(\"folder\", folder);\n}\nif (msg.topic===\"hidden\") {\n    hidden=msg.payload;    \n    context.set(\"hidden\", hidden);\n}\n\nmsg.payload = {\"start\":folder, \"hidden\": hidden};\nflow.set(\"folder\", folder);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 320,
+        "wires": [
+            [
+                "7b9c5fb425691ff7",
+                "425235f67fe28265"
+            ]
+        ]
+    },
+    {
+        "id": "7b9c5fb425691ff7",
+        "type": "fs-file-lister",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Files",
+        "start": "/home/nygma",
+        "pattern": "*.*",
+        "folders": "*",
+        "hidden": false,
+        "lstype": "both",
+        "path": true,
+        "single": true,
+        "depth": 0,
+        "stat": true,
+        "showWarnings": false,
+        "x": 510,
+        "y": 320,
+        "wires": [
+            [
+                "63e8163c84c152fc",
+                "aaaac0270c82e8ed"
+            ]
+        ]
+    },
+    {
+        "id": "63e8163c84c152fc",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Prep Data",
+        "func": "function convertDate(local) {\n    let d = new Date(local);\n    d.setTime(d.getTime()+3600*1000);\n    return d.toISOString().slice(0, 19).replace('T', ' ');\n}\n\nif (msg.topic === \"quickfilter\") {\n    let filter = msg.payload;\n    msg.payload = flow.get(\"currentfolder\").slice();\n    if (msg.payload !== \"\") {\n        for (var i = msg.payload.length-1; i >= 0; i--) {\n            if (!msg.payload[i].fname.includes(filter)) {\n                msg.payload.splice(i,1);\n            }\n        }\n    }\n    return msg;\n}\n\nfor (var i=0; i<msg.payload.length; i++) {\n   // msg.payload[i].stat.created = convertDate(msg.payload[i].stat.created);\n   // msg.payload[i].stat.changed = convertDate(msg.payload[i].stat.changed);\n   // msg.payload[i].stat.accessed = convertDate(msg.payload[i].stat.accessed);\n   // msg.payload[i].stat.statusChanged = convertDate(msg.payload[i].stat.statusChanged);\n    msg.payload[i].fname = msg.payload[i].name.replace(/^.*(\\\\|\\/|\\:)/, '');\n    if (msg.payload[i].stat.isDirectory) {\n        msg.payload[i].ext = \"folder\";\n        msg.payload[i].icon = \"<i class=\\\"fa fa-folder-o\\\"></i>\";\n    } else {\n        msg.payload[i].ext = msg.payload[i].fname.split('.').pop().toLowerCase();\n        msg.payload[i].downloadlink = \"/download?filename=\"+msg.payload[i].name;\n        switch (msg.payload[i].ext) {\n            case \"csv\":\n            case \"txt\":\n                msg.payload[i].icon = \"<i class=\\\"fa fa-file-text-o\\\"></i>\";\n                break;\n            case \"jpg\":\n            case \"jpeg\":\n            case \"png\":\n            case \"gif\":\n                msg.payload[i].icon = \"<i class=\\\"fa fa-file-image-o\\\"></i>\";\n                break;\n            case \"json\":\n            case \"py\":\n            case \"sh\":\n                msg.payload[i].icon = \"<i class=\\\"fa fa-file-code-o\\\"></i>\";\n                break;\n            default:\n                msg.payload[i].icon = \"<i class=\\\"fa fa-file-o\\\"></i>\";\n        }\n    }\n}\nflow.set(\"currentfolder\",msg.payload);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 320,
+        "wires": [
+            [
+                "2919c14601badf18"
+            ]
+        ]
+    },
+    {
+        "id": "dff3d47d2537bc46",
+        "type": "inject",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Default folder",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "/home/nygma",
+        "payloadType": "str",
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "692cc69daf72ab6c"
+            ]
+        ]
+    },
+    {
+        "id": "692cc69daf72ab6c",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Store settings",
+        "rules": [
+            {
+                "t": "set",
+                "p": "filebrowser_default_folder",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "83f5ced67eb682dd",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "52810ad44931c64b",
+        "order": 1,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Refresh",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "refresh",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "refresh",
+        "topicType": "str",
+        "x": 120,
+        "y": 320,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "ef34e7a0e66b11a4",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "b9eaf4515438b94a",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Delete",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "delete",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "delete",
+        "topicType": "str",
+        "x": 990,
+        "y": 420,
+        "wires": [
+            [
+                "c601abdc9a84225e"
+            ]
+        ]
+    },
+    {
+        "id": "d7244cbee0d34345",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "52810ad44931c64b",
+        "order": 3,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Up",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "arrow_upwards",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "up",
+        "topicType": "str",
+        "x": 130,
+        "y": 400,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "75f55c34eaa20412",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "52810ad44931c64b",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Reset",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "filebrowser_default_folder",
+        "payloadType": "global",
+        "topic": "change",
+        "topicType": "str",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "6b90757b53e05c90",
+        "type": "ui_switch",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "label": "Hidden",
+        "tooltip": "Show hidden files or not",
+        "group": "52810ad44931c64b",
+        "order": 5,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "decouple": "false",
+        "topic": "hidden",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "check_box",
+        "oncolor": "#000000",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "check_box_outline_blank",
+        "offcolor": "#000000",
+        "animate": true,
+        "className": "",
+        "x": 120,
+        "y": 440,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "44a262875185316f",
+        "type": "ui_template",
+        "z": "6c09de67e3d9cfd4",
+        "group": "b9eaf4515438b94a",
+        "name": "File Preview",
+        "order": 3,
+        "width": "10",
+        "height": "11",
+        "format": "<div ng-bind-html=\"msg.payload\" height=\"100%\" style=\"height: 100%;\"><br/>\n</div>\n\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1270,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ad73310d37303682",
+        "type": "ui_text",
+        "z": "6c09de67e3d9cfd4",
+        "group": "b9eaf4515438b94a",
+        "order": 1,
+        "width": "5",
+        "height": "1",
+        "name": "Filename",
+        "label": "",
+        "format": "{{msg.payload.fname}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 1140,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "5c35c24609ccca68",
+        "type": "switch",
+        "z": "6c09de67e3d9cfd4",
+        "name": "File type",
+        "property": "payload.ext",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "csv",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "txt",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "json",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "sh",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "py",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "jpg",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "jpeg",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "png",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "gif",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 10,
+        "x": 380,
+        "y": 560,
+        "wires": [
+            [
+                "837077fe9a2bcd43"
+            ],
+            [
+                "837077fe9a2bcd43"
+            ],
+            [
+                "837077fe9a2bcd43"
+            ],
+            [
+                "837077fe9a2bcd43"
+            ],
+            [
+                "837077fe9a2bcd43"
+            ],
+            [
+                "fd2bb748fa9da2e5"
+            ],
+            [
+                "fd2bb748fa9da2e5"
+            ],
+            [
+                "fd2bb748fa9da2e5"
+            ],
+            [
+                "fd2bb748fa9da2e5"
+            ],
+            [
+                "2e70edc8afcddedd"
+            ]
+        ]
+    },
+    {
+        "id": "837077fe9a2bcd43",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Get the file name",
+        "func": "if (msg.payload.stat.size<200000) {\n    msg.filename = msg.payload.name;\n    return [msg,null];\n} else {\n    return [null,msg];  \n}\n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 520,
+        "wires": [
+            [
+                "324a79a360a3ed87"
+            ],
+            [
+                "5880f99e0275feaf"
+            ]
+        ],
+        "outputLabels": [
+            "Folder selected",
+            ""
+        ]
+    },
+    {
+        "id": "324a79a360a3ed87",
+        "type": "file in",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "filename": "",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 780,
+        "y": 520,
+        "wires": [
+            [
+                "20a2a9a1aa4edfb7"
+            ]
+        ]
+    },
+    {
+        "id": "20a2a9a1aa4edfb7",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Div text",
+        "func": "function HTMLEncode(str) {\n    var i = str.length,\n        aRet = [];\n\n    while (i--) {\n        var iC = str[i].charCodeAt();\n        if (iC < 65 || iC > 127 || (iC > 90 && iC < 97)) {\n            aRet[i] = '&#' + iC + ';';\n        } else {\n            aRet[i] = str[i];\n        }\n    }\n    return aRet.join('');\n}\n\nlet text = \"<div>\";\nlet filecontent = \"\";\nfilecontent += msg.payload;\n\nfilecontent = HTMLEncode(filecontent);\n\n// Convert line feed to <br>\nfilecontent = filecontent.replace(/(?:\\r\\n|\\r|\\n)/g, '<br/>');\n\n\n\ntext += filecontent;\ntext += \"</div>\";\nmsg.payload = text;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 520,
+        "wires": [
+            [
+                "44a262875185316f"
+            ]
+        ]
+    },
+    {
+        "id": "fd2bb748fa9da2e5",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Get the file name",
+        "func": "if (msg.payload.stat.size < 2000000) {\n    msg.filename = msg.payload.name;\n    return [msg, null];\n} else {\n    return [null, msg];\n}\n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 600,
+        "wires": [
+            [
+                "b8855e3ae611c12a"
+            ],
+            [
+                "5880f99e0275feaf"
+            ]
+        ],
+        "outputLabels": [
+            "Folder selected",
+            ""
+        ]
+    },
+    {
+        "id": "b8855e3ae611c12a",
+        "type": "file in",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "filename": "",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 780,
+        "y": 600,
+        "wires": [
+            [
+                "c80f468efd6a69f9"
+            ]
+        ]
+    },
+    {
+        "id": "51f2bfd33b3232c5",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Div image",
+        "func": "let text = \"<img src=\\\"data:image/png;base64,\";\ntext += msg.payload;\ntext += \"\\\" width=\\\"100%\\\"/>\";\nmsg.payload = text;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1080,
+        "y": 600,
+        "wires": [
+            [
+                "44a262875185316f"
+            ]
+        ]
+    },
+    {
+        "id": "c80f468efd6a69f9",
+        "type": "base64",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 940,
+        "y": 600,
+        "wires": [
+            [
+                "51f2bfd33b3232c5"
+            ]
+        ]
+    },
+    {
+        "id": "b4e6523e9f5420d6",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Change folder",
+        "func": "\nif (msg.payload.stat.isDirectory) {\n\n    msg.topic = \"change\";\n    msg.payload = msg.payload.name;\n\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 400,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "425235f67fe28265",
+        "type": "ui_text",
+        "z": "6c09de67e3d9cfd4",
+        "group": "52810ad44931c64b",
+        "order": 4,
+        "width": "9",
+        "height": "1",
+        "name": "",
+        "label": "Folder:",
+        "format": "{{msg.payload.start}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 520,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c601abdc9a84225e",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Handle file actions",
+        "func": "switch (msg.topic) {\n    case (\"delete\"):\n        msg.file = context.get(\"lastfile\");\n        if (msg.file!==undefined) {\n            msg.filename = msg.file.name;\n            return [msg,null];\n        }\n        break;\n    case (\"download\"):\n        msg.file = context.get(\"lastfile\");\n        if (msg.file !== undefined) {\n            //msg.template = \"<script>window.location.href = \\\"/download?filename=\"+msg.file.name+\"\\\";</script>\";\n            msg.template = \"<script>window.open('/download?filename=\" + encodeURIComponent(msg.file.name) + \"', '_blank');</script>\";\n            return [null, msg];\n        }\n        break;\n    default:\n        context.set(\"lastfile\", msg.payload);\n}",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 420,
+        "wires": [
+            [
+                "a82cd7ab8893b65a"
+            ],
+            [
+                "352ee51accced266"
+            ]
+        ]
+    },
+    {
+        "id": "a82cd7ab8893b65a",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Set message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Delete confirmation",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Are you sure you want to delete this file?",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1410,
+        "y": 420,
+        "wires": [
+            [
+                "e5993cd436a9da18"
+            ]
+        ]
+    },
+    {
+        "id": "e5993cd436a9da18",
+        "type": "ui_toast",
+        "z": "6c09de67e3d9cfd4",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": false,
+        "outputs": 1,
+        "ok": "Yes",
+        "cancel": "No",
+        "raw": false,
+        "topic": "",
+        "name": "Confirmation",
+        "x": 1590,
+        "y": 420,
+        "wires": [
+            [
+                "d5273b4e74084a09"
+            ]
+        ]
+    },
+    {
+        "id": "d5273b4e74084a09",
+        "type": "switch",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Yes",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1750,
+        "y": 420,
+        "wires": [
+            [
+                "ea73f29da9fe1770"
+            ]
+        ]
+    },
+    {
+        "id": "ea73f29da9fe1770",
+        "type": "file",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Delete file",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "delete",
+        "encoding": "none",
+        "x": 1900,
+        "y": 420,
+        "wires": [
+            [
+                "cd94517793df3942"
+            ]
+        ]
+    },
+    {
+        "id": "cd94517793df3942",
+        "type": "link out",
+        "z": "6c09de67e3d9cfd4",
+        "name": "link out 13",
+        "mode": "link",
+        "links": [
+            "4fba217cb2664868"
+        ],
+        "x": 2015,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4fba217cb2664868",
+        "type": "link in",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Refresh File List",
+        "links": [
+            "cd94517793df3942"
+        ],
+        "x": 165,
+        "y": 480,
+        "wires": [
+            [
+                "088df51a870cdd7f"
+            ]
+        ]
+    },
+    {
+        "id": "2e70edc8afcddedd",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Div text",
+        "func": "msg.payload = \"<div>No preview available</div>\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1080,
+        "y": 660,
+        "wires": [
+            [
+                "44a262875185316f"
+            ]
+        ]
+    },
+    {
+        "id": "352ee51accced266",
+        "type": "ui_template",
+        "z": "6c09de67e3d9cfd4",
+        "group": "b9eaf4515438b94a",
+        "name": "",
+        "order": 18,
+        "width": 0,
+        "height": 0,
+        "format": "",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1420,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d5f5810882ee1ab0",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "b9eaf4515438b94a",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Download",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "file_download",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "download",
+        "topicType": "str",
+        "x": 1000,
+        "y": 460,
+        "wires": [
+            [
+                "c601abdc9a84225e"
+            ]
+        ]
+    },
+    {
+        "id": "5880f99e0275feaf",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "File too big",
+        "func": "msg.payload = \"<div>File too large for preview</div>\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 560,
+        "wires": [
+            [
+                "44a262875185316f"
+            ]
+        ]
+    },
+    {
+        "id": "ae69f2e1551cd38e",
+        "type": "ui_button",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "group": "52810ad44931c64b",
+        "order": 7,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Download All",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "file_download",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "download_all",
+        "topicType": "str",
+        "x": 170,
+        "y": 780,
+        "wires": [
+            [
+                "1157dde54eb1c539"
+            ]
+        ]
+    },
+    {
+        "id": "1157dde54eb1c539",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Sure?",
+        "func": "let folder = flow.get(\"currentfolder\");\nlet count = 0;\nlet total = 0;\n\nif (folder===undefined) {\n    return;\n}\n\nfor (var i = 0; i < folder.length; i++) {\n    if (folder[i].stat.isFile) {\n        count++\n        total+=folder[i].stat.size;\n    } \n}\n\nmsg.topic=\"Download all files?\"\nmsg.payload = \"This will zip \" + count + \" file(s) in this folder with a total size of \" + total.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, \",\")+\" bytes. Are you sure?\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 780,
+        "wires": [
+            [
+                "5055d51bf5558442"
+            ]
+        ]
+    },
+    {
+        "id": "5055d51bf5558442",
+        "type": "ui_toast",
+        "z": "6c09de67e3d9cfd4",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": false,
+        "outputs": 1,
+        "ok": "Yes",
+        "cancel": "No",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Confirmation",
+        "x": 510,
+        "y": 780,
+        "wires": [
+            [
+                "ab644ffb553329e5"
+            ]
+        ]
+    },
+    {
+        "id": "ab644ffb553329e5",
+        "type": "switch",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Yes?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Yes",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 780,
+        "wires": [
+            [
+                "eae047a592663cb3"
+            ]
+        ]
+    },
+    {
+        "id": "eae047a592663cb3",
+        "type": "function",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Zip command",
+        "func": "let folder = flow.get(\"folder\");\n\n// Get the current time and convert it to text\nvar now = new Date();\nvar yyyy = now.getFullYear();\nvar mm = now.getMonth() < 9 ? \"0\" + (now.getMonth() + 1) : (now.getMonth() + 1); // getMonth() is zero-based\nvar dd = now.getDate() < 10 ? \"0\" + now.getDate() : now.getDate();\nvar hh = now.getHours() < 10 ? \"0\" + now.getHours() : now.getHours();\nvar mmm = now.getMinutes() < 10 ? \"0\" + now.getMinutes() : now.getMinutes();\nvar ss = now.getSeconds() < 10 ? \"0\" + now.getSeconds() : now.getSeconds();\n\n// Generate out file name pattern\nlet filename = folder.match(/([^\\/]*)\\/*$/)[1]+\"_\" + yyyy + mm + dd + hh + mmm+ss+\".zip\";\nlet filepath = folder + \"/\" + filename;\n\nmsg.save = {\"name\": filepath, \"fname\": filename };\n\nmsg.payload = \"zip \" + filepath+\" \"+folder+\"/*.*\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 780,
+        "wires": [
+            [
+                "c55705c74560b9d0"
+            ]
+        ]
+    },
+    {
+        "id": "c55705c74560b9d0",
+        "type": "exec",
+        "z": "6c09de67e3d9cfd4",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Execute zip",
+        "x": 1050,
+        "y": 780,
+        "wires": [
+            [
+                "6b1c2a2d3ce0943f"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "53918be9aee9fbe5",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Get zip details",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "save",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1440,
+        "y": 740,
+        "wires": [
+            [
+                "ad73310d37303682",
+                "c601abdc9a84225e"
+            ]
+        ]
+    },
+    {
+        "id": "6b1c2a2d3ce0943f",
+        "type": "switch",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Success?",
+        "property": "rc.code",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1220,
+        "y": 760,
+        "wires": [
+            [
+                "53918be9aee9fbe5",
+                "0efc547974936d48"
+            ],
+            [
+                "dba5d1996759c099"
+            ]
+        ]
+    },
+    {
+        "id": "0efc547974936d48",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Notification",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Zip file containing all files in this folder has been generated. Click on Download above.",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1430,
+        "y": 780,
+        "wires": [
+            [
+                "44a262875185316f"
+            ]
+        ]
+    },
+    {
+        "id": "dba5d1996759c099",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Failed notification",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Download all failed!",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Download All",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1450,
+        "y": 820,
+        "wires": [
+            [
+                "acbd3a56b2171e70"
+            ]
+        ]
+    },
+    {
+        "id": "acbd3a56b2171e70",
+        "type": "ui_toast",
+        "z": "6c09de67e3d9cfd4",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": false,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1650,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "612aecf09ff0b2d9",
+        "type": "ui_text_input",
+        "z": "6c09de67e3d9cfd4",
+        "name": "",
+        "label": "Filter:",
+        "tooltip": "",
+        "group": "52810ad44931c64b",
+        "order": 7,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "mode": "text",
+        "delay": 300,
+        "topic": "quickfilter",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 810,
+        "y": 260,
+        "wires": [
+            [
+                "63e8163c84c152fc"
+            ]
+        ]
+    },
+    {
+        "id": "aaaac0270c82e8ed",
+        "type": "change",
+        "z": "6c09de67e3d9cfd4",
+        "name": "Empty",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 260,
+        "wires": [
+            [
+                "612aecf09ff0b2d9"
+            ]
+        ]
+    },
+    {
+        "id": "52810ad44931c64b",
+        "type": "ui_group",
+        "name": "File Browser",
+        "tab": "db5ac7bc58fb5462",
+        "order": 1,
+        "disp": true,
+        "width": "18",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b9eaf4515438b94a",
+        "type": "ui_group",
+        "name": "File Preview",
+        "tab": "db5ac7bc58fb5462",
+        "order": 2,
+        "disp": true,
+        "width": "10",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "db5ac7bc58fb5462",
+        "type": "ui_tab",
+        "name": "Files (New)",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
