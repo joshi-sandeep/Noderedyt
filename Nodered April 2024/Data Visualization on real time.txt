@@ -1,0 +1,244 @@
+ [
+    {
+        "id": "5272eb27ce0ed2ab",
+        "type": "group",
+        "z": "6076acb75fbe4778",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "14622a6513fafe09",
+            "935f8accee3fa8d9",
+            "57b0144ceb7547f3",
+            "ac5b3ee7c82ac4ea",
+            "c6ab19f2671c19dd",
+            "8e9729d23712cab5",
+            "1c8c8a4dcc7fa9ab",
+            "357a4761a965d500",
+            "1f48f3eb91bf76bd",
+            "b646e5b63cf22be4"
+        ],
+        "x": 194,
+        "y": 79,
+        "w": 592,
+        "h": 382
+    },
+    {
+        "id": "14622a6513fafe09",
+        "type": "debug",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 630,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "935f8accee3fa8d9",
+        "type": "debug",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 630,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "57b0144ceb7547f3",
+        "type": "function",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "Build the datsets to be displayed",
+        "func": "// this is where you define the legend for \n// the datasets\nvar title = \"Demo2: dynamic random Bubble chart\";\nvar legend1 = \"legend1\";\nvar legend2 = \"legend2\";\n\n// variables to be used to \nvar i, x, y, r, data1, data2;\nvar data1 = '';\nvar data2 = '';\n\n// for dataset #1\n// this code generates between 3 and 25 random\n// x/y points each between -100 and +100\n// and a random size between 1 and 2\nvar data_items = getRndInteger(3,15);\n\nfor (i = 0; i < data_items; i++) {\n    x = getRndInteger(-100,100);\n    y = getRndInteger(-100,100);\n    r = getRndInteger(0,2);\n    data1 += \"{x: \"+x+\", y: \"+y+\", r: \"+r+\"},\";\n}\n// this line removes the last comma to end the dataset\ndata1 = data1.replace(/^(.*),(.*?)$/, '$1')\nmsg.payload = {\"data1\": data1};\n\n// for dataset #2\n// this code generates between 3 and 25 random\n// x/y points each between -100 and +100\n// and a random size between 1 and 2\n\n    data_items = getRndInteger(3,15);\n\nfor (i = 0; i < data_items; i++) {\n    x = getRndInteger(-100,100);\n    y = getRndInteger(-100,100);\n    r = getRndInteger(1,2);\n    data2 += \"{x: \"+x+\", y: \"+y+\", r: \"+r+\"},\";\n}\n// this line removes the last comma to end the dataset\ndata2 = data2.replace(/^(.*),(.*?)$/, '$1')\n\n// Now we build msg.payload\nmsg.payload = { \"title\"   : title,\n                \"legend1\" : legend1,\n                \"data1\"   : data1,\n                \"legend2\" : legend2,\n                \"data2\"   : data2};\nreturn msg;\n\n// this code gets a random interger\nfunction getRndInteger(min, max) {\n    return Math.floor(Math.random() * (max - min + 1) ) + min;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 380,
+        "y": 240,
+        "wires": [
+            [
+                "ac5b3ee7c82ac4ea",
+                "8e9729d23712cab5"
+            ]
+        ]
+    },
+    {
+        "id": "ac5b3ee7c82ac4ea",
+        "type": "debug",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 630,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "c6ab19f2671c19dd",
+        "type": "inject",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Inject every 3 seconds",
+        "payloadType": "str",
+        "x": 350,
+        "y": 180,
+        "wires": [
+            [
+                "57b0144ceb7547f3"
+            ]
+        ]
+    },
+    {
+        "id": "8e9729d23712cab5",
+        "type": "template",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "Create the msg.template to use",
+        "field": "template",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<canvas id=\"bubble-chart\" width=\"1\" height=\"1\" style=\"border:1px solid #000000;\"></canvas>\n\n<script>\nnew Chart(document.getElementById(\"bubble-chart\"), {\n    type: 'bubble',\n    data: {\n      labels: \"label\",\n      datasets: [\n        {\n          label: \"{{{payload.legend1}}}\",\n          backgroundColor: \"rgba(65, 72, 255, 1.0000)\",\n          borderColor: \"#000\",\n          data: [\n            {{{payload.data1}}}\n\n          ]\n        }, {\n          label: [\"{{{payload.legend2}}}\"], \n          backgroundColor: \"rgba(255, 45, 36, 1.0000)\",\n          borderColor: \"#000\",\n          data: [\n              {{{payload.data2}}}\n\t\t  ]\n        }\n      ]\n    },\n    options: {\n        legend: {\n            display: true,\n            labels: {\n                fontColor: 'rgb(255, 99, 132)'\n            }\n        },\n    title: {\n        display: true,\n        text: '{{{payload.title}}}'\n      }, scales: {\n        yAxes: [{ \n          scaleLabel: {\n            display: true,\n            labelString: \"yAxes\"\n          }\n        }],\n        xAxes: [{ \n          scaleLabel: {\n            display: true,\n            labelString: \"xAxes\"\n          }\n        }]\n      }\n    }\n});\n\n</script>\n",
+        "output": "str",
+        "x": 370,
+        "y": 300,
+        "wires": [
+            [
+                "14622a6513fafe09",
+                "1f48f3eb91bf76bd"
+            ]
+        ]
+    },
+    {
+        "id": "1c8c8a4dcc7fa9ab",
+        "type": "comment",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "Dynamic Bubble chart with 15 points per dataset",
+        "info": "",
+        "x": 480,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "357a4761a965d500",
+        "type": "inject",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "name": "Description",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "This demo creates a bubble chart showing how you could, in a 'function' node,  dynamically add points to the datasets sent to the chart. <br><br>It creates 15 random data points for each dataset and then sends the entire set of points at one time, waits 3 seconds and repeats.",
+        "payloadType": "str",
+        "x": 310,
+        "y": 420,
+        "wires": [
+            [
+                "b646e5b63cf22be4"
+            ]
+        ]
+    },
+    {
+        "id": "1f48f3eb91bf76bd",
+        "type": "ui_template",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "group": "9b846efb4fb9b3ae",
+        "name": "Bubble (dynamic)",
+        "order": 2,
+        "width": "11",
+        "height": "5",
+        "format": "this will be ignored",
+        "storeOutMessages": false,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 330,
+        "y": 360,
+        "wires": [
+            [
+                "935f8accee3fa8d9"
+            ]
+        ]
+    },
+    {
+        "id": "b646e5b63cf22be4",
+        "type": "ui_text",
+        "z": "6076acb75fbe4778",
+        "g": "5272eb27ce0ed2ab",
+        "group": "9b846efb4fb9b3ae",
+        "order": 1,
+        "width": "12",
+        "height": "5",
+        "name": "demo 2 description",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 670,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "9b846efb4fb9b3ae",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "3b563c8dfdae86c7",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3b563c8dfdae86c7",
+        "type": "ui_tab",
+        "name": "Tab 4",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
