@@ -1,0 +1,231 @@
+[
+    {
+        "id": "31446452f3e22130",
+        "type": "group",
+        "z": "3dfe4873393ba168",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "77e9d1cc98b1e39d",
+            "9eed67339898ef0f",
+            "548e21193c4c74ad",
+            "20a17534ef0023d4",
+            "26bf5b18e37b1be4",
+            "4cd93896fdf69c4e",
+            "852c0e55899a38c6",
+            "bf50a1c790014e71"
+        ],
+        "x": 54,
+        "y": 99,
+        "w": 892,
+        "h": 282
+    },
+    {
+        "id": "77e9d1cc98b1e39d",
+        "type": "ui_slider",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "",
+        "label": "Loan Amount (₹): {{value}}",
+        "tooltip": "",
+        "group": "bd43953a.b2ab88",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "loanAmount",
+        "topicType": "str",
+        "min": "100000",
+        "max": "8000000",
+        "step": "100000",
+        "className": "",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "20a17534ef0023d4"
+            ]
+        ]
+    },
+    {
+        "id": "9eed67339898ef0f",
+        "type": "ui_slider",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "",
+        "label": "Interest Rate (%): {{value}}",
+        "tooltip": "",
+        "group": "bd43953a.b2ab88",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "interestRate",
+        "topicType": "str",
+        "min": "1",
+        "max": "20",
+        "step": "0.1",
+        "className": "",
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "20a17534ef0023d4"
+            ]
+        ]
+    },
+    {
+        "id": "548e21193c4c74ad",
+        "type": "ui_slider",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "",
+        "label": "Loan Tenure (Years): {{value}}",
+        "tooltip": "",
+        "group": "bd43953a.b2ab88",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "loanTenure",
+        "topicType": "str",
+        "min": "1",
+        "max": "30",
+        "step": "1",
+        "className": "",
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "20a17534ef0023d4"
+            ]
+        ]
+    },
+    {
+        "id": "20a17534ef0023d4",
+        "type": "function",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "Update Context",
+        "func": "if (msg.topic === 'interestRate') {\n    flow.set('interestRate', msg.payload);\n}\nif (msg.topic === 'loanTenure') {\n    flow.set('loanTenure', msg.payload);\n}\nif (msg.topic === 'loanAmount') {\n    flow.set('loanAmount', msg.payload);\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "26bf5b18e37b1be4"
+            ]
+        ]
+    },
+    {
+        "id": "26bf5b18e37b1be4",
+        "type": "function",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "Calculate EMI",
+        "func": "var loanAmount = flow.get('loanAmount');\nvar interestRate = flow.get('interestRate');\nvar loanTenure = flow.get('loanTenure');\n\nif (loanAmount == null || interestRate == null || loanTenure == null) {\n    node.error('One or more values are missing!');\n    return null;\n}\n\nvar monthlyInterestRate = interestRate / 12 / 100;\nvar numberOfMonths = loanTenure * 12;\n\nif (loanAmount <= 0 || interestRate <= 0 || loanTenure <= 0) {\n    node.error('Invalid input values!');\n    return null;\n}\n\nvar emi = loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfMonths) / (Math.pow(1 + monthlyInterestRate, numberOfMonths) - 1);\nemi = emi.toFixed(2);\n\nvar totalPayment = (emi * numberOfMonths).toFixed(2);\n\nmsg.payload = { emi: emi, totalPayment: totalPayment };\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 260,
+        "wires": [
+            [
+                "4cd93896fdf69c4e",
+                "852c0e55899a38c6"
+            ]
+        ]
+    },
+    {
+        "id": "4cd93896fdf69c4e",
+        "type": "ui_text",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "group": "bd43953a.b2ab88",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "EMI (₹)",
+        "format": "{{msg.payload.emi}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 760,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "852c0e55899a38c6",
+        "type": "ui_text",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "group": "bd43953a.b2ab88",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Total Payment You Pay(₹)",
+        "format": "{{msg.payload.totalPayment}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 810,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "bf50a1c790014e71",
+        "type": "comment",
+        "z": "3dfe4873393ba168",
+        "g": "31446452f3e22130",
+        "name": "EMI CALCULATER",
+        "info": "",
+        "x": 490,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "bd43953a.b2ab88",
+        "type": "ui_group",
+        "name": "EMI Calculator",
+        "tab": "d4dcefa4.5bbae",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "d4dcefa4.5bbae",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
