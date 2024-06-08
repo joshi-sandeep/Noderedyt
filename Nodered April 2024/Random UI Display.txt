@@ -1,0 +1,112 @@
+[
+    {
+        "id": "dbcbceeb60c28705",
+        "type": "group",
+        "z": "992e42c0f0a1debd",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "1da5ea877513a6b0",
+            "a0b53b514f78ced7",
+            "33c7a3750dc7e1cc"
+        ],
+        "x": 134,
+        "y": 159,
+        "w": 732,
+        "h": 82
+    },
+    {
+        "id": "1da5ea877513a6b0",
+        "type": "inject",
+        "z": "992e42c0f0a1debd",
+        "g": "dbcbceeb60c28705",
+        "name": "5-second interval",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 200,
+        "wires": [
+            [
+                "a0b53b514f78ced7"
+            ]
+        ]
+    },
+    {
+        "id": "a0b53b514f78ced7",
+        "type": "function",
+        "z": "992e42c0f0a1debd",
+        "g": "dbcbceeb60c28705",
+        "name": "Generate Random Emoji",
+        "func": "const emojis = ['😀', '😂', '😍', '😎', '😊', '😢', '😡', '🤔', '😴', '🤖'];\nconst colors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#FF33A6'];\n\n// Select a random emoji and color\nconst randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];\nconst randomColor = colors[Math.floor(Math.random() * colors.length)];\n\nmsg.payload = {\n    emoji: randomEmoji,\n    color: randomColor\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 200,
+        "wires": [
+            [
+                "33c7a3750dc7e1cc"
+            ]
+        ]
+    },
+    {
+        "id": "33c7a3750dc7e1cc",
+        "type": "ui_template",
+        "z": "992e42c0f0a1debd",
+        "g": "dbcbceeb60c28705",
+        "group": "98f39c47.ef76d",
+        "name": "Display Random Emoji",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "format": "<div style=\"background-color: {{msg.payload.color}}; font-size: 48px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center;\">\n    <span ng-bind=\"msg.payload.emoji\"></span>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 740,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98f39c47.ef76d",
+        "type": "ui_group",
+        "name": "Random Emoji Group",
+        "tab": "a3b0b1d1.e46b2",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "a3b0b1d1.e46b2",
+        "type": "ui_tab",
+        "name": "Random Emoji",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
