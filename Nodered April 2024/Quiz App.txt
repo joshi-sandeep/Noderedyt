@@ -1,0 +1,180 @@
+[
+    {
+        "id": "e16da028a5b16006",
+        "type": "inject",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Generate Question on Load",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "832fd6f3188c8834"
+            ]
+        ]
+    },
+    {
+        "id": "832fd6f3188c8834",
+        "type": "function",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Generate Random Numbers",
+        "func": "const num1 = Math.floor(Math.random() * 10) + 1;\nconst num2 = Math.floor(Math.random() * 10) + 1;\nmsg.payload = { num1, num2, question: `What is ${num1} + ${num2}?` };\nflow.set('sum', num1 + num2);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "f17c2e6954b707a9",
+                "8b6ff5be5ebe77e0"
+            ]
+        ]
+    },
+    {
+        "id": "f17c2e6954b707a9",
+        "type": "ui_template",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "group": "98f39c47.ef76d",
+        "name": "Question Template",
+        "order": 1,
+        "width": "6",
+        "height": "4",
+        "format": "<div>\n    <p>{{msg.payload.question}}</p>\n    <input type=\"number\" id=\"userInput\" ng-model=\"userInput\" placeholder=\"Enter your answer\">\n    <button ng-click=\"send({topic: 'checkAnswer', payload: { sum: userInput }})\">Submit</button>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 610,
+        "y": 360,
+        "wires": [
+            [
+                "3950d1729fa7d391"
+            ]
+        ]
+    },
+    {
+        "id": "3950d1729fa7d391",
+        "type": "function",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Check Answer",
+        "func": "const correctSum = flow.get('sum');\nconst userAnswer = msg.payload && msg.payload.sum ? parseInt(msg.payload.sum, 10) : 0;\nnode.warn(`userAnswer: ${userAnswer}`);  // Debugging log\nnode.warn(`correctSum: ${correctSum}`);  // Debugging log\nif (isNaN(userAnswer)) {\n    node.error('Invalid input, not a number');\n    return null;\n}\nif (userAnswer === correctSum) {\n    msg.payload = { emoji: '😀', color: '#33FF57' };\n} else {\n    msg.payload = { emoji: '😢', color: '#FF5733' };\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 260,
+        "wires": [
+            [
+                "f61cbb81c2e024db",
+                "15a4b4e154644a44"
+            ]
+        ]
+    },
+    {
+        "id": "f61cbb81c2e024db",
+        "type": "ui_template",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "group": "98f39c47.ef76d",
+        "name": "Result Template",
+        "order": 2,
+        "width": "6",
+        "height": "4",
+        "format": "<div style=\"background-color: {{msg.payload.color}}; font-size: 48px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center;\">\n    <span ng-bind=\"msg.payload.emoji\"></span>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 980,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8b6ff5be5ebe77e0",
+        "type": "debug",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Debug Question Generation",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 420,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "15a4b4e154644a44",
+        "type": "debug",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Debug Answer Checking",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 810,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "8cc761658a7759bb",
+        "type": "comment",
+        "z": "9ed432582670a6f2",
+        "g": "8ebd48f1686e26c2",
+        "name": "Quize App",
+        "info": "",
+        "x": 600,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "98f39c47.ef76d",
+        "type": "ui_group",
+        "name": "Random Emoji Group",
+        "tab": "a3b0b1d1.e46b2",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "a3b0b1d1.e46b2",
+        "type": "ui_tab",
+        "name": "Random Emoji",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
