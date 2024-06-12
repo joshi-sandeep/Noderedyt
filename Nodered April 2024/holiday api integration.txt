@@ -1,0 +1,193 @@
+[
+    {
+        "id": "455950769057eebf",
+        "type": "group",
+        "z": "daefd7270e18e039",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "b8c2d93c7cfe06fe",
+            "f918965586af8ab6",
+            "013155ce343b031d",
+            "6bc0a82870f04bcb",
+            "0a2a22b6564f6638",
+            "e69b1eb729b08c9c",
+            "5212c603ab37833e"
+        ],
+        "x": 234,
+        "y": 119,
+        "w": 712,
+        "h": 322
+    },
+    {
+        "id": "b8c2d93c7cfe06fe",
+        "type": "ui_template",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "group": "8d704d3.6477fb",
+        "name": "Date Input Form",
+        "order": 0,
+        "width": "10",
+        "height": "5",
+        "format": "<div>\n    <form id=\"dateForm\">\n        <br>\n        <label for=\"validFrom\">Valid From (YYYY-MM-DD):</label>\n        <input type=\"text\" id=\"validFrom\" name=\"validFrom\" required><br> <br>\n        <label for=\"validTo\">Valid To (YYYY-MM-DD):</label>\n        <input type=\"text\" id=\"validTo\" name=\"validTo\" required><br>\n        <input type=\"submit\" value=\"Submit\">\n    </form>\n</div>\n<script>\n    (function(scope) {\n        scope.$watch('msg', function(msg) {\n            document.getElementById('dateForm').onsubmit = function(e) {\n                e.preventDefault();\n                var validFrom = document.getElementById('validFrom').value;\n                var validTo = document.getElementById('validTo').value;\n                scope.send({payload: {validFrom: validFrom, validTo: validTo}});\n            };\n        });\n    })(scope);\n</script>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 340,
+        "y": 240,
+        "wires": [
+            [
+                "f918965586af8ab6"
+            ]
+        ]
+    },
+    {
+        "id": "f918965586af8ab6",
+        "type": "function",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "name": "Prepare API URL",
+        "func": "var validFrom = msg.payload.validFrom;\nvar validTo = msg.payload.validTo;\nmsg.url = `https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&validFrom=${validFrom}&validTo=${validTo}`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 320,
+        "wires": [
+            [
+                "013155ce343b031d"
+            ]
+        ]
+    },
+    {
+        "id": "013155ce343b031d",
+        "type": "http request",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "name": "Fetch Holidays",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 460,
+        "y": 400,
+        "wires": [
+            [
+                "6bc0a82870f04bcb"
+            ]
+        ]
+    },
+    {
+        "id": "6bc0a82870f04bcb",
+        "type": "function",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "name": "Process Data",
+        "func": "if (!msg.payload || !Array.isArray(msg.payload)) {\n    return null;\n}\n\nvar holidays = msg.payload;\nvar tableRows = '';\n\nholidays.forEach(function(holiday) {\n    var name = holiday.name.find(n => n.language === 'EN').text;\n    var startDate = holiday.startDate;\n    var nationwide = holiday.nationwide ? 'Yes' : 'No';\n    var subdivisions = holiday.subdivisions ? holiday.subdivisions.map(s => s.shortName).join(', ') : 'N/A';\n    \n    tableRows += `<tr>\n                    <td>${name}</td>\n                    <td>${startDate}</td>\n                    <td>${nationwide}</td>\n                    <td>${subdivisions}</td>\n                  </tr>`;\n});\n\nmsg.payload = tableRows;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 400,
+        "wires": [
+            [
+                "0a2a22b6564f6638"
+            ]
+        ]
+    },
+    {
+        "id": "0a2a22b6564f6638",
+        "type": "template",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "name": "Create HTML Table",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<table>\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Date</th>\n      <th>Nationwide</th>\n      <th>Subdivisions</th>\n    </tr>\n  </thead>\n  <tbody>\n    {{{payload}}}\n  </tbody>\n</table>\n</html>",
+        "output": "str",
+        "x": 770,
+        "y": 320,
+        "wires": [
+            [
+                "e69b1eb729b08c9c"
+            ]
+        ]
+    },
+    {
+        "id": "e69b1eb729b08c9c",
+        "type": "ui_template",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "group": "8d704d3.6477fb",
+        "name": "Display Holidays Table",
+        "order": 1,
+        "width": "15",
+        "height": "6",
+        "format": "<div ng-bind-html=\"msg.payload\"></div>",
+        "storeOutMessages": false,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 820,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5212c603ab37833e",
+        "type": "comment",
+        "z": "daefd7270e18e039",
+        "g": "455950769057eebf",
+        "name": "Holiday Table",
+        "info": "",
+        "x": 590,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "8d704d3.6477fb",
+        "type": "ui_group",
+        "name": "Holidays",
+        "tab": "6f8d3e63.fcb4e",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6f8d3e63.fcb4e",
+        "type": "ui_tab",
+        "name": "Public Holidays",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
