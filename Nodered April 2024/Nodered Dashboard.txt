@@ -1,0 +1,413 @@
+ [
+    {
+        "id": "4871dd6adfc03eb8",
+        "type": "ui_button",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "group": "2fb9c205.dae50e",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "click me",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Hi All Welcome to my youtube channel . please do subscribe if you haven't",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 280,
+        "y": 80,
+        "wires": [
+            [
+                "44a2e556bd121381",
+                "f50cbe4d3fea7b9b",
+                "bdd3bd2f7505b2b1"
+            ]
+        ]
+    },
+    {
+        "id": "44a2e556bd121381",
+        "type": "ui_text",
+        "z": "2a6f59526b2b79ff",
+        "group": "2fb9c205.dae50e",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Click Here !",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "x": 550,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "314a05893de872fd",
+        "type": "ui_gauge",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "group": "122a9c51.bdf31c",
+        "order": 1,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "200",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "75",
+        "seg2": "150",
+        "x": 530,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3d79447902032e91",
+        "type": "ui_slider",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "label": "slider",
+        "tooltip": "",
+        "group": "122a9c51.bdf31c",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "outs": "all",
+        "topic": "",
+        "min": 0,
+        "max": "200",
+        "step": 1,
+        "x": 270,
+        "y": 360,
+        "wires": [
+            [
+                "314a05893de872fd",
+                "50bd256f22ab1e0f",
+                "5821352652962f42"
+            ]
+        ]
+    },
+    {
+        "id": "50bd256f22ab1e0f",
+        "type": "ui_chart",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "group": "122a9c51.bdf31c",
+        "order": 3,
+        "width": "6",
+        "height": "4",
+        "label": "line chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "200",
+        "removeOlder": "2",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 540,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5821352652962f42",
+        "type": "ui_chart",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "group": "122a9c51.bdf31c",
+        "order": 4,
+        "width": "6",
+        "height": "4",
+        "label": "bar chart",
+        "chartType": "bar",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "200",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 540,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f50cbe4d3fea7b9b",
+        "type": "ui_toast",
+        "z": "2a6f59526b2b79ff",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "",
+        "name": "",
+        "x": 570,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "61cbfc9ea3b94d5a",
+        "type": "ui_text_input",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "label": "Enter Text",
+        "tooltip": "",
+        "group": "2fb9c205.dae50e",
+        "order": 3,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "mode": "text",
+        "delay": "0",
+        "topic": "",
+        "x": 280,
+        "y": 180,
+        "wires": [
+            [
+                "44a2e556bd121381",
+                "d0f8e8aead2e10c1"
+            ]
+        ]
+    },
+    {
+        "id": "547d711ce4b4911b",
+        "type": "ui_dropdown",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "label": "Select Option",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "2fb9c205.dae50e",
+        "order": 4,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "options": [
+            {
+                "label": "Option 1",
+                "value": "1",
+                "type": "str"
+            },
+            {
+                "label": "Option 2",
+                "value": "2",
+                "type": "str"
+            },
+            {
+                "label": "Option 3",
+                "value": "3",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 300,
+        "y": 300,
+        "wires": [
+            [
+                "bea5e78fcbae9ef2"
+            ]
+        ]
+    },
+    {
+        "id": "54f539054b85349e",
+        "type": "ui_switch",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "label": "Toggle Switch",
+        "tooltip": "",
+        "group": "2fb9c205.dae50e",
+        "order": 5,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 300,
+        "y": 480,
+        "wires": [
+            [
+                "2d32f744eebdcbee"
+            ]
+        ]
+    },
+    {
+        "id": "5088d3b31a568c61",
+        "type": "ui_date_picker",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "label": "Pick a Date",
+        "group": "2fb9c205.dae50e",
+        "order": 6,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "topic": "",
+        "x": 290,
+        "y": 540,
+        "wires": [
+            [
+                "471a1914066d5f25"
+            ]
+        ]
+    },
+    {
+        "id": "bdd3bd2f7505b2b1",
+        "type": "play audio",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "voice": "2",
+        "x": 550,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "471a1914066d5f25",
+        "type": "debug",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "bea5e78fcbae9ef2",
+        "type": "debug",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "2d32f744eebdcbee",
+        "type": "debug",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "d0f8e8aead2e10c1",
+        "type": "debug",
+        "z": "2a6f59526b2b79ff",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2fb9c205.dae50e",
+        "type": "ui_group",
+        "name": "Button",
+        "tab": "de296677.584f4",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "122a9c51.bdf31c",
+        "type": "ui_group",
+        "name": "Analog",
+        "tab": "de296677.584f4",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "de296677.584f4",
+        "type": "ui_tab",
+        "name": "Basic Dashboard",
+        "icon": "dashboard",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    }
+]
