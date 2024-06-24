@@ -1,0 +1,139 @@
+[
+    {
+        "id": "d7d1b5b2.e64b18",
+        "type": "tab",
+        "label": "LinkedList",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "af09e2a8.0b7f8",
+        "type": "http in",
+        "z": "d7d1b5b2.e64b18",
+        "name": "",
+        "url": "/push",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "f6cf89d9.3b3b38"
+            ]
+        ]
+    },
+    {
+        "id": "f6cf89d9.3b3b38",
+        "type": "function",
+        "z": "d7d1b5b2.e64b18",
+        "name": "Push Function",
+        "func": "var newNode = {\n    value: msg.payload.value,\n    next: null\n};\n\nif (flow.get('head') === undefined) {\n    flow.set('head', newNode);\n    flow.set('tail', newNode);\n} else {\n    var tail = flow.get('tail');\n    tail.next = newNode;\n    flow.set('tail', newNode);\n}\n\nmsg.payload = flow.get('head');\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 360,
+        "y": 120,
+        "wires": [
+            [
+                "5a6a8a72.45f1d4"
+            ]
+        ]
+    },
+    {
+        "id": "1b3e524d.b28d0e",
+        "type": "http in",
+        "z": "d7d1b5b2.e64b18",
+        "name": "",
+        "url": "/pop",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 200,
+        "wires": [
+            [
+                "85c90a9e.28f798"
+            ]
+        ]
+    },
+    {
+        "id": "85c90a9e.28f798",
+        "type": "function",
+        "z": "d7d1b5b2.e64b18",
+        "name": "Pop Function",
+        "func": "if (flow.get('head') === undefined) {\n    msg.payload = null;\n    return msg;\n}\n\nvar head = flow.get('head');\nif (head === flow.get('tail')) {\n    flow.set('head', undefined);\n    flow.set('tail', undefined);\n} else {\n    var currentNode = head;\n    while (currentNode.next !== flow.get('tail')) {\n        currentNode = currentNode.next;\n    }\n    currentNode.next = null;\n    flow.set('tail', currentNode);\n}\n\nmsg.payload = flow.get('head');\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 360,
+        "y": 200,
+        "wires": [
+            [
+                "5a6a8a72.45f1d4"
+            ]
+        ]
+    },
+    {
+        "id": "5a6a8a72.45f1d4",
+        "type": "http response",
+        "z": "d7d1b5b2.e64b18",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 560,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "9a5f1c8b.89b08",
+        "type": "http in",
+        "z": "d7d1b5b2.e64b18",
+        "name": "",
+        "url": "/linkedlist",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "ea8c2b25.77a8b8"
+            ]
+        ]
+    },
+    {
+        "id": "ea8c2b25.77a8b8",
+        "type": "template",
+        "z": "d7d1b5b2.e64b18",
+        "name": "LinkedList HTML",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>LinkedList Visualization</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n            margin: 0;\n            background-color: #f0f0f0;\n        }\n        .container {\n            text-align: center;\n            background-color: #fff;\n            padding: 20px;\n            border-radius: 10px;\n            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\n        }\n        .controls {\n            margin-bottom: 20px;\n        }\n        .controls input {\n            padding: 10px;\n            width: 200px;\n            margin-right: 10px;\n        }\n        .controls button {\n            padding: 10px 20px;\n            margin: 5px;\n            cursor: pointer;\n        }\n        .linkedlist {\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            flex-wrap: wrap;\n            margin-top: 20px;\n        }\n        .node {\n            display: flex;\n            align-items: center;\n            margin: 5px;\n        }\n        .node div {\n            padding: 10px 20px;\n            background-color: #007bff;\n            color: white;\n            border-radius: 5px;\n            margin-right: 5px;\n            position: relative;\n        }\n        .node div::after {\n            content: '→';\n            position: absolute;\n            right: -15px;\n            color: #007bff;\n            font-weight: bold;\n        }\n        .node:last-child div::after {\n            content: '';\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>LinkedList Visualization</h1>\n        <div class=\"controls\">\n            <input type=\"text\" id=\"valueInput\" placeholder=\"Enter value\">\n            <button onclick=\"push()\">Push</button>\n            <button onclick=\"pop()\">Pop</button>\n        </div>\n        <div class=\"linkedlist\" id=\"linkedlist\">\n            <!-- Linked list will be visualized here -->\n        </div>\n    </div>\n    <script>\n        function renderList(list) {\n            const listElement = document.getElementById('linkedlist');\n            listElement.innerHTML = '';\n            let currentNode = list;\n            while (currentNode) {\n                const nodeElement = document.createElement('div');\n                nodeElement.classList.add('node');\n                nodeElement.innerHTML = `<div>${currentNode.value}</div>`;\n                listElement.appendChild(nodeElement);\n                currentNode = currentNode.next;\n            }\n        }\n\n        async function push() {\n            const valueInput = document.getElementById('valueInput');\n            const value = valueInput.value;\n            if (value) {\n                const response = await fetch('/push', {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json'\n                    },\n                    body: JSON.stringify({ value })\n                });\n                const data = await response.json();\n                renderList(data);\n                valueInput.value = '';\n                valueInput.focus();\n            }\n        }\n\n        async function pop() {\n            const response = await fetch('/pop', {\n                method: 'POST'\n            });\n            const data = await response.json();\n            renderList(data);\n        }\n    </script>\n</body>\n</html>",
+        "output": "str",
+        "x": 360,
+        "y": 60,
+        "wires": [
+            [
+                "45efdd56.8b0a44"
+            ]
+        ]
+    },
+    {
+        "id": "45efdd56.8b0a44",
+        "type": "http response",
+        "z": "d7d1b5b2.e64b18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "Content-Type": "text/html"
+        },
+        "x": 560,
+        "y": 60,
+        "wires": []
+    }
+]

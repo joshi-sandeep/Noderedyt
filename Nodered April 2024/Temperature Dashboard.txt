@@ -1,0 +1,202 @@
+[
+    {
+        "id": "b46906431b8479dd",
+        "type": "group",
+        "z": "4d2b64a7f176acf8",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "69944bab9cdd7e35",
+            "152b7bc5378acecf",
+            "519d08af8e561355",
+            "129779633c081d14",
+            "aa4616b37c1efa74",
+            "ea3a0a131a7f03aa"
+        ],
+        "x": 194,
+        "y": 79,
+        "w": 692,
+        "h": 322
+    },
+    {
+        "id": "69944bab9cdd7e35",
+        "type": "inject",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "name": "Temperature Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "55",
+        "payloadType": "num",
+        "x": 330,
+        "y": 280,
+        "wires": [
+            [
+                "152b7bc5378acecf"
+            ]
+        ]
+    },
+    {
+        "id": "152b7bc5378acecf",
+        "type": "function",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "name": "Random Temp",
+        "func": "msg.payload = Math.round(Math.random() * 100);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 280,
+        "wires": [
+            [
+                "519d08af8e561355",
+                "129779633c081d14"
+            ]
+        ]
+    },
+    {
+        "id": "519d08af8e561355",
+        "type": "ui_gauge",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "name": "Temperature Gauge",
+        "group": "f6a3a0b5.9a4f",
+        "order": 0,
+        "width": "6",
+        "height": "6",
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "C",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 760,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "129779633c081d14",
+        "type": "ui_chart",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "name": "Temperature Chart",
+        "group": "f6a3a0b5.9a4f",
+        "order": 1,
+        "width": "12",
+        "height": "6",
+        "label": "Temperature Over Time",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "No Data",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#ffbb78",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 750,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "aa4616b37c1efa74",
+        "type": "ui_template",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "group": "f6a3a0b5.9a4f",
+        "name": "Custom Widget",
+        "order": 2,
+        "width": "12",
+        "height": "6",
+        "format": "<style>\n    .custom-widget {\n        font-size: 20px;\n        color: #333;\n        text-align: center;\n    }\n</style>\n<div class=\"custom-widget\">\n    <h1>Custom HTML Widget</h1>\n    <p>Node-RED Dashboard Customization</p>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 740,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ea3a0a131a7f03aa",
+        "type": "comment",
+        "z": "4d2b64a7f176acf8",
+        "g": "b46906431b8479dd",
+        "name": "Temperature Custom Dashboard ",
+        "info": "",
+        "x": 510,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f6a3a0b5.9a4f",
+        "type": "ui_group",
+        "name": "Main",
+        "tab": "8e418284.7e4b98",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "8e418284.7e4b98",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
