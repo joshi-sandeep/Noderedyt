@@ -1,0 +1,211 @@
+[
+    {
+        "id": "962b97251dd76aec",
+        "type": "inject",
+        "z": "26241e9ee55c86ae",
+        "name": "Inject Random Price",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "f9c2244aa22da877"
+            ]
+        ]
+    },
+    {
+        "id": "f9c2244aa22da877",
+        "type": "function",
+        "z": "26241e9ee55c86ae",
+        "name": "Generate Stock Prices",
+        "func": "// Define stock symbols and initialize prices if not set\nvar stocks = [\n    {symbol: 'ABC', name: 'Stock ABC', price: context.get('price_ABC') || 100},\n    {symbol: 'DEF', name: 'Stock DEF', price: context.get('price_DEF') || 100},\n    {symbol: 'GHI', name: 'Stock GHI', price: context.get('price_GHI') || 100}\n];\n\nvar messages = [];\n\nstocks.forEach(function(stock) {\n    // Generate random price change\n    var priceChange = (Math.random() * 10) - 5; // Random change between -5 to +5\n    stock.price += priceChange;\n    stock.price = parseFloat(stock.price.toFixed(2));\n    context.set('price_' + stock.symbol, stock.price);\n\n    // Create message for each stock\n    messages.push({\n        topic: stock.symbol,\n        payload: {\n            stock: stock.name,\n            price: stock.price,\n            time: new Date().toLocaleTimeString()\n        }\n    });\n});\n\nreturn [messages];",
+        "outputs": 3,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "ce847bf6441c15c1",
+                "25459849c7d9f755"
+            ],
+            [
+                "ce847bf6441c15c1",
+                "25459849c7d9f755"
+            ],
+            [
+                "ce847bf6441c15c1",
+                "25459849c7d9f755"
+            ]
+        ]
+    },
+    {
+        "id": "ce847bf6441c15c1",
+        "type": "change",
+        "z": "26241e9ee55c86ae",
+        "name": "Format for Chart",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$number(payload.price)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 620,
+        "y": 260,
+        "wires": [
+            [
+                "50dddd7ab30d1498"
+            ]
+        ]
+    },
+    {
+        "id": "50dddd7ab30d1498",
+        "type": "ui_chart",
+        "z": "26241e9ee55c86ae",
+        "name": "Stock Price Chart",
+        "group": "5a22481f.7bca14",
+        "order": 0,
+        "width": "6",
+        "height": "6",
+        "label": "Stock Price",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Waiting for data...",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 820,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "25459849c7d9f755",
+        "type": "function",
+        "z": "26241e9ee55c86ae",
+        "name": "Prepare Table Data",
+        "func": "var history = flow.get('history') || [];\n\nhistory.push(msg.payload);\nif (history.length > 100) {\n    history.shift();\n}\n\nflow.set('history', history);\n\nreturn { payload: history };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 620,
+        "y": 360,
+        "wires": [
+            [
+                "a65137e9ffe5c813"
+            ]
+        ]
+    },
+    {
+        "id": "a65137e9ffe5c813",
+        "type": "ui_table",
+        "z": "26241e9ee55c86ae",
+        "group": "5a22481f.7bca14",
+        "name": "Stock Price History",
+        "order": 1,
+        "width": "6",
+        "height": "6",
+        "columns": [
+            {
+                "field": "time",
+                "title": "Time",
+                "width": "25%",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "stock",
+                "title": "Stock",
+                "width": "25%",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "price",
+                "title": "Price",
+                "width": "25%",
+                "align": "right",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "icon",
+                "title": "",
+                "width": "25%",
+                "align": "center",
+                "formatter": "html",
+                "template": "<md-icon md-svg-icon=\"icons/stock-market.svg\" style=\"fill: #757575;\"></md-icon>"
+            }
+        ],
+        "outputs": 1,
+        "x": 830,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5a22481f.7bca14",
+        "type": "ui_group",
+        "name": "Stocks",
+        "tab": "d83e2cc3.7f5048",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "d83e2cc3.7f5048",
+        "type": "ui_tab",
+        "name": "Stock Market Simulator",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
