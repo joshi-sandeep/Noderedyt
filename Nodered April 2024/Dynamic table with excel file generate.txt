@@ -1,0 +1,321 @@
+[
+    {
+        "id": "e40402635fe5a629",
+        "type": "group",
+        "z": "1f9c9377bca756d7",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "718bd31d8a1db5ae",
+            "b4f75124f660d4ed",
+            "39733af865ee60ab",
+            "6e60c26ef9a7817e",
+            "5205cbbe24626b64",
+            "f6545918073842e4",
+            "a37c5e23e3693572",
+            "7d5ca2951327daa3",
+            "ceeff689729de90c",
+            "ba0cf9f68ad00186",
+            "adbacb69f53bf326"
+        ],
+        "x": 194,
+        "y": 179,
+        "w": 832,
+        "h": 402
+    },
+    {
+        "id": "718bd31d8a1db5ae",
+        "type": "ui_table",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "group": "12345678.9abc",
+        "name": "",
+        "order": 1,
+        "width": 12,
+        "height": 6,
+        "columns": [
+            {
+                "field": "name",
+                "title": "Name",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "age",
+                "title": "Age",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "city",
+                "title": "City",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 590,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "b4f75124f660d4ed",
+        "type": "inject",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"name\":\"John Doe\",\"age\":30,\"city\":\"New York\"},{\"name\":\"Jane Smith\",\"age\":25,\"city\":\"Los Angeles\"},{\"name\":\"Mike Johnson\",\"age\":40,\"city\":\"Chicago\"},{\"name\":\"Emily Davis\",\"age\":35,\"city\":\"Houston\"}]",
+        "payloadType": "json",
+        "x": 410,
+        "y": 340,
+        "wires": [
+            [
+                "39733af865ee60ab",
+                "718bd31d8a1db5ae",
+                "ceeff689729de90c"
+            ]
+        ]
+    },
+    {
+        "id": "39733af865ee60ab",
+        "type": "change",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Store Table Data",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tableData",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 630,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6e60c26ef9a7817e",
+        "type": "ui_button",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "",
+        "group": "12345678.9abc",
+        "order": 2,
+        "width": 12,
+        "height": 1,
+        "passthru": false,
+        "label": "Download CSV",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 300,
+        "y": 500,
+        "wires": [
+            [
+                "5205cbbe24626b64"
+            ]
+        ]
+    },
+    {
+        "id": "5205cbbe24626b64",
+        "type": "function",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Generate CSV",
+        "func": "let data = flow.get('tableData') || [];\n\nlet csv = 'Name,Age,City\\n';\ndata.forEach(row => {\n    csv += `${row.name},${row.age},${row.city}\\n`;\n});\n\nmsg.payload = csv;\nmsg.filename = 'data.csv';\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 500,
+        "wires": [
+            [
+                "f6545918073842e4",
+                "a37c5e23e3693572"
+            ]
+        ]
+    },
+    {
+        "id": "f6545918073842e4",
+        "type": "ui_toast",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": false,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "Download Notification",
+        "name": "File Downloaded Successfully",
+        "x": 870,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "a37c5e23e3693572",
+        "type": "file",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "",
+        "filename": "D:/ytexamples/userinfo.csv",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 780,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7d5ca2951327daa3",
+        "type": "comment",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Creating a Dynamic Table and CSV Generator in Node-RED: Step-by-Step Tutorial",
+        "info": "",
+        "x": 570,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ceeff689729de90c",
+        "type": "function",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Generate Age Data",
+        "func": "let data = msg.payload;\n\nlet ageGroups = {\n    '0-25': 0,\n    '26-50': 0,\n    '51+': 0\n};\n\ndata.forEach(person => {\n    if (person.age <= 25) {\n        ageGroups['0-25']++;\n    } else if (person.age <= 50) {\n        ageGroups['26-50']++;\n    } else {\n        ageGroups['51+']++;\n    }\n});\n\nmsg.payload = [\n    {\"name\": \"0-25\", \"y\": ageGroups['0-25']},\n    {\"name\": \"26-50\", \"y\": ageGroups['26-50']},\n    {\"name\": \"51+\", \"y\": ageGroups['51+']}\n];\nreturn msg;",
+        "outputs": 1,
+        "x": 580,
+        "y": 460,
+        "wires": [
+            [
+                "adbacb69f53bf326",
+                "ba0cf9f68ad00186"
+            ]
+        ]
+    },
+    {
+        "id": "ba0cf9f68ad00186",
+        "type": "ui_chart",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Age Distribution",
+        "group": "12345678.9abc",
+        "order": 3,
+        "width": 12,
+        "height": 6,
+        "chartType": "pie",
+        "legend": "true",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "No Data",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#00a651",
+            "#ff7f0e",
+            "#ff0000"
+        ],
+        "outputs": 1,
+        "x": 800,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "adbacb69f53bf326",
+        "type": "debug",
+        "z": "1f9c9377bca756d7",
+        "g": "e40402635fe5a629",
+        "name": "Debug Age Data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 800,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "12345678.9abc",
+        "type": "ui_group",
+        "name": "Group 1",
+        "tab": "abcdef12.3456",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "abcdef12.3456",
+        "type": "ui_tab",
+        "name": "Tab 1",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
