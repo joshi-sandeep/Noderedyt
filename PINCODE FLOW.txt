@@ -1,0 +1,188 @@
+[
+    {
+        "id": "fb01151875c49532",
+        "type": "group",
+        "z": "e1d7a0f8.b8c62",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "e3e2a067.f9e41",
+            "6b45b0d0.1d037",
+            "2c35d0e0.1af92",
+            "3e5d0df7.f0b4c2",
+            "e77cb022.f370b",
+            "7a77b1df.d967d",
+            "ae8781fd.7f2f3",
+            "f68d63f2.2c8c1",
+            "cd4daa2149cc2e3a"
+        ],
+        "x": 94,
+        "y": 139,
+        "w": 972,
+        "h": 262
+    },
+    {
+        "id": "e3e2a067.f9e41",
+        "type": "http in",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "",
+        "url": "/pincode",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 410,
+        "y": 260,
+        "wires": [
+            [
+                "6b45b0d0.1d037"
+            ]
+        ]
+    },
+    {
+        "id": "6b45b0d0.1d037",
+        "type": "template",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "HTML Form",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<html>\n    <body>\n        <h2>Pincode Lookup</h2>\n        <form action=\"/lookup\" method=\"get\">\n            Pincode: <input type=\"text\" name=\"pincode\">\n            <input type=\"submit\" value=\"Submit\">\n        </form>\n    </body>\n</html>",
+        "output": "str",
+        "x": 610,
+        "y": 260,
+        "wires": [
+            [
+                "2c35d0e0.1af92"
+            ]
+        ]
+    },
+    {
+        "id": "2c35d0e0.1af92",
+        "type": "http response",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 810,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "3e5d0df7.f0b4c2",
+        "type": "http in",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "",
+        "url": "/lookup",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "e77cb022.f370b"
+            ]
+        ]
+    },
+    {
+        "id": "e77cb022.f370b",
+        "type": "http request",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "Fetch API Data",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.postalpincode.in/pincode/{{{req.query.pincode}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 400,
+        "y": 360,
+        "wires": [
+            [
+                "7a77b1df.d967d"
+            ]
+        ]
+    },
+    {
+        "id": "7a77b1df.d967d",
+        "type": "function",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "Process API Response",
+        "func": "var result = msg.payload[0];\nvar html = \"<html><body><h2>Pincode Lookup Result</h2>\";\nif (result.Status === \"Success\") {\n    html += `<p>Message: ${result.Message}</p>`;\n    html += '<table border=\"1\"><tr><th>Name</th><th>Branch Type</th><th>Delivery Status</th><th>Circle</th><th>District</th><th>Division</th><th>Region</th><th>Block</th><th>State</th><th>Country</th><th>Pincode</th></tr>';\n    result.PostOffice.forEach(function(postOffice) {\n        html += `<tr><td>${postOffice.Name}</td><td>${postOffice.BranchType}</td><td>${postOffice.DeliveryStatus}</td><td>${postOffice.Circle}</td><td>${postOffice.District}</td><td>${postOffice.Division}</td><td>${postOffice.Region}</td><td>${postOffice.Block}</td><td>${postOffice.State}</td><td>${postOffice.Country}</td><td>${postOffice.Pincode}</td></tr>`;\n    });\n    html += '</table>';\n} else {\n    html += `<p>${result.Message}</p>`;\n}\nhtml += '</body></html>';\nmsg.payload = html;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 360,
+        "wires": [
+            [
+                "ae8781fd.7f2f3"
+            ]
+        ]
+    },
+    {
+        "id": "ae8781fd.7f2f3",
+        "type": "template",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "Display Results",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "{{{payload}}}",
+        "output": "str",
+        "x": 820,
+        "y": 360,
+        "wires": [
+            [
+                "f68d63f2.2c8c1"
+            ]
+        ]
+    },
+    {
+        "id": "f68d63f2.2c8c1",
+        "type": "http response",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 990,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "cd4daa2149cc2e3a",
+        "type": "comment",
+        "z": "e1d7a0f8.b8c62",
+        "g": "fb01151875c49532",
+        "name": "UI Design With API Data",
+        "info": "",
+        "x": 610,
+        "y": 180,
+        "wires": []
+    }
+]
