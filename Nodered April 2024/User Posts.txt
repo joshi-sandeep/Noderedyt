@@ -1,0 +1,270 @@
+[
+    {
+        "id": "efcebbdc441aca20",
+        "type": "group",
+        "z": "37439ef15f071667",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "b1169f34.fc81f",
+            "2ecac377.60d1ec",
+            "7f5d6d2d.5a8e04",
+            "3c8d29af.e91176",
+            "29511b10.a2c7d4",
+            "3992e8f8.3e14b8",
+            "0c8a8d8f.04d4e",
+            "68fddf87.1a650",
+            "f5a5df8c.54b8d",
+            "8f3756fb5a6ebf53",
+            "b54aedf3a7572a6b"
+        ],
+        "x": 34,
+        "y": 139,
+        "w": 1032,
+        "h": 322
+    },
+    {
+        "id": "b1169f34.fc81f",
+        "type": "http request",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Fetch Posts",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://gorest.co.in/public/v2/posts",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 310,
+        "y": 260,
+        "wires": [
+            [
+                "7f5d6d2d.5a8e04",
+                "8f3756fb5a6ebf53"
+            ]
+        ]
+    },
+    {
+        "id": "2ecac377.60d1ec",
+        "type": "http request",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Fetch Users",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://gorest.co.in/public/v2/users",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 310,
+        "y": 340,
+        "wires": [
+            [
+                "3c8d29af.e91176",
+                "b54aedf3a7572a6b"
+            ]
+        ]
+    },
+    {
+        "id": "7f5d6d2d.5a8e04",
+        "type": "change",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Set Posts Topic",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "posts",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 180,
+        "wires": [
+            [
+                "29511b10.a2c7d4"
+            ]
+        ]
+    },
+    {
+        "id": "3c8d29af.e91176",
+        "type": "change",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Set Users Topic",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "users",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 420,
+        "wires": [
+            [
+                "29511b10.a2c7d4"
+            ]
+        ]
+    },
+    {
+        "id": "29511b10.a2c7d4",
+        "type": "join",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Join Data",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 490,
+        "y": 300,
+        "wires": [
+            [
+                "3992e8f8.3e14b8"
+            ]
+        ]
+    },
+    {
+        "id": "3992e8f8.3e14b8",
+        "type": "function",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "Combine Data",
+        "func": "const posts = msg.payload.posts;\nconst users = msg.payload.users;\nconst combinedData = users.map(user => {\n    return {\n        name: user.name,\n        posts: posts.filter(post => post.user_id === user.id)\n    };\n});\nmsg.payload = combinedData;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 300,
+        "wires": [
+            [
+                "0c8a8d8f.04d4e"
+            ]
+        ]
+    },
+    {
+        "id": "0c8a8d8f.04d4e",
+        "type": "template",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "HTML Template",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            background-color: #f8f9fa;\n            margin: 0;\n            padding: 0;\n        }\n        h2 {\n            text-align: center;\n            color: #343a40;\n        }\n        .user-container {\n            margin: 20px auto;\n            border: 1px solid #ccc;\n            padding: 15px;\n            max-width: 600px;\n            background-color: #ffffff;\n            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n        }\n        .user-name {\n            font-weight: bold;\n            color: #007bff;\n            margin-bottom: 10px;\n            font-size: 1.2em;\n        }\n        .post-list {\n            list-style-type: none;\n            padding-left: 0;\n        }\n        .post-list li {\n            margin-bottom: 10px;\n            padding-left: 20px;\n            position: relative;\n        }\n        .post-list li::before {\n            content: '💬';\n            position: absolute;\n            left: 0;\n            top: 0;\n            font-size: 1.2em;\n            color: #6c757d;\n        }\n        .post-title {\n            margin-bottom: 5px;\n            font-weight: bold;\n            color: #495057;\n        }\n        .post-body {\n            font-size: 0.9em;\n            color: #6c757d;\n        }\n    </style>\n</head>\n<body>\n    <h2>Users Posts</h2>\n    {{#payload}}\n        <div class=\"user-container\">\n            <div class=\"user-name\">{{name}}</div>\n            <ul class=\"post-list\">\n                {{#posts}}\n                    <li>\n                        <div class=\"post-title\">{{title}}</div>\n                        <div class=\"post-body\">{{body}}</div>\n                    </li>\n                {{/posts}}\n            </ul>\n        </div>\n    {{/payload}}\n</body>\n</html>\n",
+        "output": "str",
+        "x": 840,
+        "y": 300,
+        "wires": [
+            [
+                "68fddf87.1a650"
+            ]
+        ]
+    },
+    {
+        "id": "68fddf87.1a650",
+        "type": "http response",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 990,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "f5a5df8c.54b8d",
+        "type": "http in",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "",
+        "url": "/users-posts",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 300,
+        "wires": [
+            [
+                "b1169f34.fc81f",
+                "2ecac377.60d1ec"
+            ]
+        ]
+    },
+    {
+        "id": "8f3756fb5a6ebf53",
+        "type": "debug",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "debug 383",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "b54aedf3a7572a6b",
+        "type": "debug",
+        "z": "37439ef15f071667",
+        "g": "efcebbdc441aca20",
+        "name": "debug 384",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 340,
+        "wires": []
+    }
+]
